@@ -15,9 +15,56 @@ const INDIAN_STATES = [
 type Question = { id: number; question_text: string; order: number };
 type Video = { id: number; title: string; url: string; order: number; questions: Question[] };
 
+function IconUser() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+  );
+}
+
+function IconMapPin() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/>
+    </svg>
+  );
+}
+
+function IconCheck() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  );
+}
+
+function IconVideo() {
+  return (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8z"/>
+    </svg>
+  );
+}
+
+function IconChevronRight() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m9 18 6-6-6-6"/>
+    </svg>
+  );
+}
+
+function IconLoader() {
+  return (
+    <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+    </svg>
+  );
+}
+
 export default function Home() {
   const { toast } = useToast();
-
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
@@ -28,38 +75,13 @@ export default function Home() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
-    fetchVideos();
-  }, []);
+  useEffect(() => { fetchVideos(); }, []);
 
   async function fetchVideos() {
     setLoading(true);
-    const { data: vids, error: vidErr } = await supabase
-      .from("videos")
-      .select("*")
-      .order("order", { ascending: true });
-
-    if (vidErr || !vids) {
-      setLoading(false);
-      return;
-    }
-
-    const { data: qs, error: qErr } = await supabase
-      .from("questions")
-      .select("*")
-      .order("order", { ascending: true });
-
-    if (qErr) {
-      setLoading(false);
-      return;
-    }
-
-    const enriched: Video[] = vids.map((v) => ({
-      ...v,
-      questions: (qs || []).filter((q) => q.video_id === v.id),
-    }));
-
-    setVideos(enriched);
+    const { data: vids } = await supabase.from("videos").select("*").order("order", { ascending: true });
+    const { data: qs } = await supabase.from("questions").select("*").order("order", { ascending: true });
+    setVideos((vids || []).map((v) => ({ ...v, questions: (qs || []).filter((q) => q.video_id === v.id) })));
     setLoading(false);
   }
 
@@ -69,12 +91,10 @@ export default function Home() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     if (!name.trim() || !district.trim() || !state || !designation) {
       toast({ title: "Missing Information", description: "Please fill in all personal details.", variant: "destructive" });
       return;
     }
-
     for (const video of videos) {
       for (const q of video.questions) {
         if (!answers[q.id]?.trim()) {
@@ -83,60 +103,41 @@ export default function Home() {
         }
       }
     }
-
     setSubmitting(true);
-
     const { data: submission, error: subErr } = await supabase
-      .from("submissions")
-      .insert([{ name: name.trim(), district: district.trim(), state, designation }])
-      .select()
-      .single();
-
+      .from("submissions").insert([{ name: name.trim(), district: district.trim(), state, designation }]).select().single();
     if (subErr || !submission) {
       setSubmitting(false);
       toast({ title: "Submission Failed", description: subErr?.message || "Could not save your details.", variant: "destructive" });
       return;
     }
-
-    const responseRows = [];
-    for (const video of videos) {
-      for (const q of video.questions) {
-        responseRows.push({ submission_id: submission.id, question_id: q.id, answer_text: answers[q.id] || "" });
-      }
-    }
-
+    const responseRows = videos.flatMap((v) =>
+      v.questions.map((q) => ({ submission_id: submission.id, question_id: q.id, answer_text: answers[q.id] || "" }))
+    );
     const { error: respErr } = await supabase.from("responses").insert(responseRows);
-
     setSubmitting(false);
-
     if (respErr) {
-      toast({ title: "Partial Failure", description: "Details saved but answers could not be stored.", variant: "destructive" });
+      toast({ title: "Partial Error", description: "Details saved but some answers failed.", variant: "destructive" });
       return;
     }
-
     setSubmitted(true);
-    toast({ title: "Submitted Successfully", description: "Your response has been recorded. Thank you!" });
   }
 
   function resetForm() {
-    setSubmitted(false);
-    setName(""); setDistrict(""); setState(""); setDesignation("");
-    setAnswers({});
+    setSubmitted(false); setName(""); setDistrict(""); setState(""); setDesignation(""); setAnswers({});
   }
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background bg-grid flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="w-24 h-24 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center mx-auto mb-6">
-            <svg className="w-12 h-12 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+          <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center mx-auto mb-6 glow-primary-sm text-primary">
+            <IconCheck />
           </div>
-          <h2 className="text-3xl font-black text-foreground mb-3">Thank You!</h2>
-          <p className="text-muted-foreground text-lg mb-1">Your submission has been recorded successfully.</p>
-          <p className="text-muted-foreground text-sm">We appreciate your participation in K-RAID.</p>
-          <button onClick={resetForm} className="mt-8 px-8 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-opacity">
+          <h2 className="text-3xl font-black text-foreground mb-3">Submitted Successfully</h2>
+          <p className="text-muted-foreground text-base mb-1">Your response has been recorded.</p>
+          <p className="text-muted-foreground text-sm">Thank you for participating in K-RAID.</p>
+          <button onClick={resetForm} className="mt-8 px-8 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition-colors glow-primary-sm">
             Submit Another Response
           </button>
         </div>
@@ -146,83 +147,111 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* Ambient glow at top */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/60">
+        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center font-black text-primary-foreground text-lg">K</div>
+            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center font-black text-white text-base glow-primary-sm">K</div>
             <div>
-              <h1 className="text-xl font-black tracking-wider text-foreground">K-RAID</h1>
-              <p className="text-xs text-muted-foreground leading-none">Kabaddi Player &amp; Coach Registration</p>
+              <span className="text-lg font-black tracking-widest text-white">K-RAID</span>
+              <span className="ml-2 text-xs text-muted-foreground hidden sm:inline">Kabaddi Registration Portal</span>
             </div>
           </div>
-          <a href="/admin" className="text-xs text-muted-foreground hover:text-primary transition-colors px-3 py-1.5 border border-border rounded-lg hover:border-primary/50">
-            Admin
-          </a>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
+            <span>Registration Open</span>
+          </div>
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="max-w-5xl mx-auto px-4 py-10 space-y-8">
+      <form onSubmit={handleSubmit} className="max-w-5xl mx-auto px-4 py-12 space-y-8 relative">
         {/* Hero */}
-        <div className="text-center py-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/30 rounded-full text-primary text-sm font-semibold mb-4">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            Registration Open
-          </div>
-          <h2 className="text-4xl md:text-5xl font-black tracking-wide text-foreground mb-3">
-            Register Your <span className="text-primary">K-RAID</span> Profile
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            Watch all videos, answer the questions thoroughly, and submit your details.
+        <div className="text-center py-8">
+          <p className="text-xs font-semibold tracking-[0.3em] text-primary uppercase mb-4">Kabaddi Player & Coach Registry</p>
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4">
+            <span className="text-white">Register Your </span>
+            <span className="gradient-text">K-RAID</span>
+            <span className="text-white"> Profile</span>
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
+            Watch all videos carefully, provide detailed answers to each question, and submit your registration.
           </p>
         </div>
 
-        {/* Personal Details */}
-        <section className="bg-card border border-card-border rounded-2xl p-6 md:p-8 shadow-md">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">1</span>
-            <h3 className="text-xl font-bold text-foreground">Personal Details</h3>
+        {/* Step indicator */}
+        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1.5">
+            <span className="w-5 h-5 rounded-full bg-primary text-white font-bold flex items-center justify-center text-[10px]">1</span>
+            <span>Personal Details</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">Full Name <span className="text-destructive">*</span></label>
-              <input
-                type="text" required value={name} onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your full name"
-                className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition"
-              />
+          <IconChevronRight />
+          <div className="flex items-center gap-1.5">
+            <span className="w-5 h-5 rounded-full bg-muted text-muted-foreground font-bold flex items-center justify-center text-[10px]">2</span>
+            <span>Watch & Answer</span>
+          </div>
+          <IconChevronRight />
+          <div className="flex items-center gap-1.5">
+            <span className="w-5 h-5 rounded-full bg-muted text-muted-foreground font-bold flex items-center justify-center text-[10px]">3</span>
+            <span>Submit</span>
+          </div>
+        </div>
+
+        {/* Personal Details */}
+        <section className="bg-card border border-card-border rounded-2xl overflow-hidden shadow-lg card-hover">
+          <div className="px-6 py-4 border-b border-border/60 bg-muted/20 flex items-center gap-3">
+            <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
+              <IconUser />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">District <span className="text-destructive">*</span></label>
-              <input
-                type="text" required value={district} onChange={(e) => setDistrict(e.target.value)}
-                placeholder="Enter your district"
-                className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition"
-              />
+              <h3 className="font-bold text-foreground">Personal Details</h3>
+              <p className="text-xs text-muted-foreground">Your identity information</p>
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">State <span className="text-destructive">*</span></label>
-              <select
-                required value={state} onChange={(e) => setState(e.target.value)}
-                className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition"
-              >
-                <option value="" disabled>Select your state</option>
-                {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">Designation <span className="text-destructive">*</span></label>
-              <div className="flex gap-3">
-                {(["player", "coach"] as const).map((d) => (
-                  <button
-                    key={d} type="button" onClick={() => setDesignation(d)}
-                    className={`flex-1 py-3 rounded-lg border font-semibold text-sm capitalize transition-all ${
-                      designation === d
-                        ? "bg-primary border-primary text-primary-foreground shadow-lg"
-                        : "bg-background border-input text-muted-foreground hover:border-ring hover:text-foreground"
-                    }`}
-                  >{d}</button>
-                ))}
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-2">Full Name <span className="text-destructive">*</span></label>
+                <input
+                  type="text" required value={name} onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your full name"
+                  className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-2">District <span className="text-destructive">*</span></label>
+                <input
+                  type="text" required value={district} onChange={(e) => setDistrict(e.target.value)}
+                  placeholder="Enter your district"
+                  className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-2">State <span className="text-destructive">*</span></label>
+                <select
+                  required value={state} onChange={(e) => setState(e.target.value)}
+                  className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
+                >
+                  <option value="" disabled>Select your state</option>
+                  {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-2">Designation <span className="text-destructive">*</span></label>
+                <div className="flex gap-3 h-[50px]">
+                  {(["player", "coach"] as const).map((d) => (
+                    <button
+                      key={d} type="button" onClick={() => setDesignation(d)}
+                      className={`flex-1 rounded-xl border font-semibold text-sm capitalize transition-all ${
+                        designation === d
+                          ? "bg-primary border-primary text-white shadow-lg glow-primary-sm"
+                          : "bg-background border-input text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                      }`}
+                    >{d}</button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -230,52 +259,58 @@ export default function Home() {
 
         {/* Videos + Questions */}
         {loading ? (
-          <div className="text-center py-16">
-            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="text-center py-20">
+            <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4 glow-primary-sm"></div>
             <p className="text-muted-foreground">Loading videos and questions...</p>
           </div>
         ) : videos.length === 0 ? (
           <div className="text-center py-16 bg-card border border-card-border rounded-2xl">
-            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
-              </svg>
+            <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4 text-muted-foreground">
+              <IconVideo />
             </div>
-            <p className="text-muted-foreground font-medium">No videos available yet.</p>
-            <p className="text-muted-foreground text-sm mt-1">Check back later or contact the administrator.</p>
+            <p className="text-foreground font-semibold">No videos available yet</p>
+            <p className="text-muted-foreground text-sm mt-1">Please check back later.</p>
           </div>
         ) : (
           videos.map((video, idx) => (
-            <section key={video.id} className="bg-card border border-card-border rounded-2xl p-6 md:p-8 shadow-md space-y-6">
-              <div className="flex items-center gap-3">
-                <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">{idx + 2}</span>
-                <h3 className="text-xl font-bold text-foreground">{video.title}</h3>
+            <section key={video.id} className="bg-card border border-card-border rounded-2xl overflow-hidden shadow-lg card-hover">
+              <div className="px-6 py-4 border-b border-border/60 bg-muted/20 flex items-center gap-3">
+                <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary font-bold text-xs">
+                  {idx + 2}
+                </div>
+                <div>
+                  <h3 className="font-bold text-foreground">{video.title}</h3>
+                  <p className="text-xs text-muted-foreground">{video.questions.length} questions to answer</p>
+                </div>
               </div>
-              <div className="rounded-xl overflow-hidden border border-border bg-black aspect-video">
-                <video controls className="w-full h-full" src={video.url} preload="metadata">
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-              <div className="space-y-6">
-                {video.questions.map((q, qi) => (
-                  <div key={q.id}>
-                    <label className="block text-sm font-semibold text-foreground mb-2">
-                      <span className="text-primary mr-1">Q{qi + 1}.</span>
-                      {q.question_text}
-                      <span className="text-destructive ml-1">*</span>
-                    </label>
-                    <textarea
-                      required rows={6}
-                      value={answers[q.id] || ""}
-                      onChange={(e) => setAnswer(q.id, e.target.value)}
-                      placeholder="Write your detailed answer here..."
-                      className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition resize-y min-h-[140px]"
-                    />
-                  </div>
-                ))}
-                {video.questions.length === 0 && (
-                  <p className="text-muted-foreground text-sm italic">No questions added for this video yet.</p>
-                )}
+              <div className="p-6 space-y-6">
+                {/* Video Player */}
+                <div className="rounded-xl overflow-hidden border border-border/60 bg-black aspect-video shadow-lg">
+                  <video controls className="w-full h-full" src={video.url} preload="metadata">
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                {/* Questions */}
+                <div className="space-y-5">
+                  {video.questions.map((q, qi) => (
+                    <div key={q.id} className="space-y-2">
+                      <label className="flex items-start gap-2 text-sm font-semibold text-foreground">
+                        <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded bg-primary/20 border border-primary/30 text-primary text-[10px] font-bold flex items-center justify-center">Q{qi + 1}</span>
+                        <span>{q.question_text} <span className="text-destructive">*</span></span>
+                      </label>
+                      <textarea
+                        required rows={6}
+                        value={answers[q.id] || ""}
+                        onChange={(e) => setAnswer(q.id, e.target.value)}
+                        placeholder="Provide a detailed, thoughtful answer..."
+                        className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all resize-y min-h-[140px] text-sm leading-relaxed"
+                      />
+                    </div>
+                  ))}
+                  {video.questions.length === 0 && (
+                    <p className="text-muted-foreground text-sm italic text-center py-4">No questions added for this video.</p>
+                  )}
+                </div>
               </div>
             </section>
           ))
@@ -283,27 +318,24 @@ export default function Home() {
 
         {/* Submit */}
         {!loading && videos.length > 0 && (
-          <div className="pb-10">
+          <div className="pb-12">
             <button
               type="submit" disabled={submitting}
-              className="w-full py-4 bg-primary text-primary-foreground font-bold text-lg rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-3"
+              className="w-full py-4 bg-primary text-white font-bold text-base rounded-xl hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg glow-primary flex items-center justify-center gap-3"
             >
-              {submitting ? (
-                <>
-                  <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Submitting...
-                </>
-              ) : "Submit Registration"}
+              {submitting ? <><IconLoader /> Submitting...</> : "Submit Registration"}
             </button>
-            <p className="text-center text-muted-foreground text-sm mt-4">
-              All fields are required. Ensure you have answered all questions before submitting.
+            <p className="text-center text-muted-foreground text-xs mt-4">
+              All fields are required. Ensure all video questions are answered before submitting.
             </p>
           </div>
         )}
       </form>
+
+      {/* Footer */}
+      <footer className="border-t border-border/40 py-6">
+        <p className="text-center text-xs text-muted-foreground">K-RAID &mdash; Kabaddi Player & Coach Registration Portal</p>
+      </footer>
     </div>
   );
 }

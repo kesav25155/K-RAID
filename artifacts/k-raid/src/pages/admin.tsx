@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
@@ -9,6 +9,51 @@ type Response = { id: number; submission_id: number; question_id: number; answer
 
 const ADMIN_PASSWORD = "kraid@2025";
 
+/* ─── Icons ─── */
+function IconLock() {
+  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>;
+}
+function IconPlus() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+}
+function IconTrash() {
+  return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>;
+}
+function IconChevronDown() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
+}
+function IconDownload() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
+}
+function IconX() {
+  return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+}
+function IconLogOut() {
+  return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>;
+}
+function IconUpload() {
+  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>;
+}
+function IconLoader() {
+  return <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>;
+}
+function IconFilm() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>;
+}
+function IconUsers() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+}
+function IconHelpCircle() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+}
+function IconMessageSquare() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+}
+function IconEye() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
+}
+
+/* ─── Login ─── */
 function LoginScreen({ onLogin }: { onLogin: () => void }) {
   const [pw, setPw] = useState("");
   const [err, setErr] = useState(false);
@@ -19,24 +64,27 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   }
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="w-full max-w-sm relative">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center font-black text-primary-foreground text-3xl mx-auto mb-4">K</div>
-          <h1 className="text-2xl font-black text-foreground">Admin Panel</h1>
-          <p className="text-muted-foreground text-sm mt-1">K-RAID Management Portal</p>
+          <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center font-black text-white text-2xl mx-auto mb-4 glow-primary-sm">K</div>
+          <h1 className="text-2xl font-black text-foreground">Management Portal</h1>
+          <p className="text-muted-foreground text-sm mt-1">K-RAID Administration</p>
         </div>
-        <form onSubmit={attempt} className="bg-card border border-card-border rounded-2xl p-6 shadow-lg space-y-4">
+        <form onSubmit={attempt} className="bg-card border border-card-border rounded-2xl p-6 shadow-xl space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-2">Password</label>
+            <label className="block text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
+              <span className="text-primary"><IconLock /></span> Access Code
+            </label>
             <input
               type="password" value={pw} onChange={(e) => { setPw(e.target.value); setErr(false); }}
-              placeholder="Enter admin password"
-              className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition"
+              placeholder="Enter access code"
+              className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
-            {err && <p className="text-destructive text-sm mt-1">Incorrect password.</p>}
+            {err && <p className="text-destructive text-xs mt-1.5">Incorrect access code. Please try again.</p>}
           </div>
-          <button type="submit" className="w-full py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-opacity">
-            Login
+          <button type="submit" className="w-full py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors glow-primary-sm">
+            Access Dashboard
           </button>
         </form>
       </div>
@@ -44,6 +92,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   );
 }
 
+/* ─── Main Admin ─── */
 export default function Admin() {
   const { toast } = useToast();
   const [authed, setAuthed] = useState(false);
@@ -56,9 +105,11 @@ export default function Admin() {
   const [loading, setLoading] = useState(false);
 
   const [newVideoTitle, setNewVideoTitle] = useState("");
-  const [newVideoUrl, setNewVideoUrl] = useState("");
-  const [addingVideo, setAddingVideo] = useState(false);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [showAddVideo, setShowAddVideo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [newQText, setNewQText] = useState("");
   const [newQVideoId, setNewQVideoId] = useState<number | null>(null);
@@ -67,9 +118,7 @@ export default function Admin() {
   const [expandedSub, setExpandedSub] = useState<number | null>(null);
   const [expandedVideo, setExpandedVideo] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (authed) fetchAll();
-  }, [authed]);
+  useEffect(() => { if (authed) fetchAll(); }, [authed]);
 
   async function fetchAll() {
     setLoading(true);
@@ -88,14 +137,45 @@ export default function Admin() {
 
   async function addVideo(e: React.FormEvent) {
     e.preventDefault();
-    if (!newVideoTitle.trim() || !newVideoUrl.trim()) return;
-    setAddingVideo(true);
+    if (!newVideoTitle.trim() || !videoFile) {
+      toast({ title: "Missing fields", description: "Please provide a title and select a video file.", variant: "destructive" });
+      return;
+    }
+    setUploading(true);
+    setUploadProgress(10);
+
+    const ext = videoFile.name.split(".").pop();
+    const fileName = `video_${Date.now()}.${ext}`;
+
+    const { error: uploadErr } = await supabase.storage
+      .from("videos")
+      .upload(fileName, videoFile, { contentType: videoFile.type, upsert: false });
+
+    if (uploadErr) {
+      setUploading(false);
+      toast({ title: "Upload Failed", description: uploadErr.message, variant: "destructive" });
+      return;
+    }
+    setUploadProgress(70);
+
+    const { data: urlData } = supabase.storage.from("videos").getPublicUrl(fileName);
+    const publicUrl = urlData.publicUrl;
+
     const maxOrder = videos.reduce((m, v) => Math.max(m, v.order), 0);
-    const { error } = await supabase.from("videos").insert([{ title: newVideoTitle.trim(), url: newVideoUrl.trim(), order: maxOrder + 1 }]);
-    setAddingVideo(false);
-    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-    setNewVideoTitle(""); setNewVideoUrl(""); setShowAddVideo(false);
-    toast({ title: "Video added!" });
+    const { error: insertErr } = await supabase.from("videos").insert([{ title: newVideoTitle.trim(), url: publicUrl, order: maxOrder + 1 }]);
+
+    setUploading(false);
+    setUploadProgress(0);
+
+    if (insertErr) {
+      toast({ title: "Error", description: insertErr.message, variant: "destructive" });
+      return;
+    }
+
+    setNewVideoTitle(""); setVideoFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setShowAddVideo(false);
+    toast({ title: "Video uploaded successfully" });
     fetchAll();
   }
 
@@ -106,17 +186,17 @@ export default function Admin() {
     fetchAll();
   }
 
-  async function addQuestion(e: React.FormEvent) {
+  async function addQuestion(e: React.FormEvent, videoId: number) {
     e.preventDefault();
-    if (!newQText.trim() || !newQVideoId) return;
+    if (!newQText.trim() || !videoId) return;
     setAddingQ(true);
-    const videoQs = questions.filter((q) => q.video_id === newQVideoId);
+    const videoQs = questions.filter((q) => q.video_id === videoId);
     const maxOrder = videoQs.reduce((m, q) => Math.max(m, q.order), 0);
-    const { error } = await supabase.from("questions").insert([{ video_id: newQVideoId, question_text: newQText.trim(), order: maxOrder + 1 }]);
+    const { error } = await supabase.from("questions").insert([{ video_id: videoId, question_text: newQText.trim(), order: maxOrder + 1 }]);
     setAddingQ(false);
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-    setNewQText("");
-    toast({ title: "Question added!" });
+    setNewQText(""); setNewQVideoId(null);
+    toast({ title: "Question added" });
     fetchAll();
   }
 
@@ -130,23 +210,18 @@ export default function Admin() {
   function exportCSV() {
     const rows: string[][] = [];
     rows.push(["Submission ID","Name","District","State","Designation","Submitted At","Question ID","Question","Answer"]);
-
     for (const sub of submissions) {
       const subResponses = responses.filter((r) => r.submission_id === sub.id);
       if (subResponses.length === 0) {
         rows.push([String(sub.id), sub.name, sub.district, sub.state, sub.designation, sub.submitted_at, "", "", ""]);
       } else {
         for (const resp of subResponses) {
-          const question = questions.find((q) => q.id === resp.question_id);
-          rows.push([
-            String(sub.id), sub.name, sub.district, sub.state, sub.designation, sub.submitted_at,
-            String(resp.question_id), question?.question_text || "", resp.answer_text,
-          ]);
+          const q = questions.find((q) => q.id === resp.question_id);
+          rows.push([String(sub.id), sub.name, sub.district, sub.state, sub.designation, sub.submitted_at, String(resp.question_id), q?.question_text || "", resp.answer_text]);
         }
       }
     }
-
-    const csv = rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const csv = rows.map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -156,167 +231,216 @@ export default function Admin() {
 
   if (!authed) return <LoginScreen onLogin={() => setAuthed(true)} />;
 
+  const statCards = [
+    { label: "Videos", value: videos.length, icon: <IconFilm />, color: "text-primary" },
+    { label: "Questions", value: questions.length, icon: <IconHelpCircle />, color: "text-cyan-400" },
+    { label: "Submissions", value: submissions.length, icon: <IconUsers />, color: "text-emerald-400" },
+    { label: "Responses", value: responses.length, icon: <IconMessageSquare />, color: "text-violet-400" },
+  ];
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[500px] h-[180px] bg-primary/6 rounded-full blur-3xl pointer-events-none" />
+
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/60">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center font-black text-primary-foreground text-lg">K</div>
+            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center font-black text-white text-base glow-primary-sm">K</div>
             <div>
-              <h1 className="text-xl font-black tracking-wider text-foreground">K-RAID <span className="text-primary text-sm font-semibold">Admin</span></h1>
-              <p className="text-xs text-muted-foreground leading-none">Management Portal</p>
+              <span className="text-base font-black tracking-widest text-white">K-RAID</span>
+              <span className="ml-2 text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">Admin</span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <a href="/" className="text-xs text-muted-foreground hover:text-primary transition-colors px-3 py-1.5 border border-border rounded-lg hover:border-primary/50">
-              View Site
+          <div className="flex items-center gap-2">
+            <a href="/" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground px-3 py-1.5 border border-border rounded-lg hover:border-border/80 transition-colors">
+              <IconEye /> View Site
             </a>
-            <button onClick={() => setAuthed(false)} className="text-xs text-muted-foreground hover:text-destructive transition-colors px-3 py-1.5 border border-border rounded-lg hover:border-destructive/50">
-              Logout
+            <button onClick={() => setAuthed(false)} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive px-3 py-1.5 border border-border rounded-lg hover:border-destructive/50 transition-colors">
+              <IconLogOut /> Logout
             </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8 relative">
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: "Videos", value: videos.length, icon: "🎬" },
-            { label: "Questions", value: questions.length, icon: "❓" },
-            { label: "Submissions", value: submissions.length, icon: "📋" },
-            { label: "Responses", value: responses.length, icon: "💬" },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-card border border-card-border rounded-xl p-4 shadow-sm">
-              <div className="text-2xl mb-1">{stat.icon}</div>
-              <div className="text-3xl font-black text-foreground">{stat.value}</div>
-              <div className="text-muted-foreground text-sm">{stat.label}</div>
+          {statCards.map((s) => (
+            <div key={s.label} className="bg-card border border-card-border rounded-xl p-4 shadow-sm card-hover">
+              <div className={`mb-2 ${s.color}`}>{s.icon}</div>
+              <div className="text-3xl font-black text-foreground tabular-nums">{s.value}</div>
+              <div className="text-muted-foreground text-xs mt-0.5">{s.label}</div>
             </div>
           ))}
         </div>
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6">
-          {(["videos", "responses"] as const).map((t) => (
+          {([["videos", "Videos & Questions", <IconFilm />], ["responses", "Submissions", <IconUsers />]] as const).map(([t, label, icon]) => (
             <button
-              key={t} onClick={() => setTab(t)}
-              className={`px-5 py-2 rounded-lg font-semibold text-sm capitalize transition-all ${
-                tab === t ? "bg-primary text-primary-foreground shadow-md" : "bg-card border border-card-border text-muted-foreground hover:text-foreground hover:border-ring"
+              key={t} onClick={() => setTab(t as "videos" | "responses")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                tab === t
+                  ? "bg-primary text-white shadow-md glow-primary-sm"
+                  : "bg-card border border-card-border text-muted-foreground hover:text-foreground hover:border-primary/30"
               }`}
             >
-              {t === "videos" ? "Videos & Questions" : "Submissions & Responses"}
+              {icon}{label}
             </button>
           ))}
         </div>
 
-        {/* Videos Tab */}
+        {/* ── Videos Tab ── */}
         {tab === "videos" && (
-          <div className="space-y-6">
+          <div className="space-y-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-foreground">Manage Videos</h2>
+              <h2 className="text-lg font-bold text-foreground">Manage Videos</h2>
               <button
                 onClick={() => setShowAddVideo(!showAddVideo)}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 transition-opacity"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary/90 transition-colors glow-primary-sm"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Add Video
+                <IconPlus /> Add Video
               </button>
             </div>
 
             {/* Add Video Form */}
             {showAddVideo && (
-              <form onSubmit={addVideo} className="bg-card border border-primary/30 rounded-xl p-5 space-y-4 shadow-md">
-                <h3 className="font-semibold text-foreground text-sm uppercase tracking-wide text-primary">New Video</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-card border border-primary/30 rounded-xl p-5 shadow-lg">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-foreground text-sm">Upload New Video</h3>
+                  <button type="button" onClick={() => setShowAddVideo(false)} className="text-muted-foreground hover:text-foreground">
+                    <IconX />
+                  </button>
+                </div>
+                <form onSubmit={addVideo} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-foreground mb-1.5">Title <span className="text-destructive">*</span></label>
+                    <label className="block text-sm font-semibold text-foreground mb-1.5">Video Title <span className="text-destructive">*</span></label>
                     <input
                       value={newVideoTitle} onChange={(e) => setNewVideoTitle(e.target.value)}
                       placeholder="e.g. Video 1: Introduction to Kabaddi"
-                      className="w-full px-3 py-2.5 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                      className="w-full px-3 py-2.5 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-foreground mb-1.5">Video URL <span className="text-destructive">*</span></label>
-                    <input
-                      value={newVideoUrl} onChange={(e) => setNewVideoUrl(e.target.value)}
-                      placeholder="https://example.com/video.mp4"
-                      className="w-full px-3 py-2.5 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-                    />
+                    <label className="block text-sm font-semibold text-foreground mb-1.5">Video File <span className="text-destructive">*</span></label>
+                    <div
+                      className="border-2 border-dashed border-border/80 rounded-xl p-6 text-center cursor-pointer hover:border-primary/50 transition-colors bg-background/50"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {videoFile ? (
+                        <div className="space-y-1">
+                          <div className="text-primary flex justify-center"><IconFilm /></div>
+                          <p className="text-foreground font-semibold text-sm truncate">{videoFile.name}</p>
+                          <p className="text-muted-foreground text-xs">{(videoFile.size / (1024 * 1024)).toFixed(1)} MB</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="text-muted-foreground flex justify-center"><IconUpload /></div>
+                          <p className="text-sm text-muted-foreground">Click to select a video file</p>
+                          <p className="text-xs text-muted-foreground/60">MP4, MOV, WebM supported</p>
+                        </div>
+                      )}
+                      <input
+                        ref={fileInputRef} type="file" accept="video/*" className="hidden"
+                        onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-3">
-                  <button type="submit" disabled={addingVideo} className="px-5 py-2 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 disabled:opacity-50">
-                    {addingVideo ? "Adding..." : "Add Video"}
-                  </button>
-                  <button type="button" onClick={() => setShowAddVideo(false)} className="px-5 py-2 bg-muted text-muted-foreground font-semibold text-sm rounded-lg hover:bg-muted/80">
-                    Cancel
-                  </button>
-                </div>
-              </form>
+
+                  {uploading && (
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>Uploading to storage...</span>
+                        <span>{uploadProgress}%</span>
+                      </div>
+                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-primary rounded-full transition-all duration-300 glow-primary-sm" style={{ width: `${uploadProgress}%` }} />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3">
+                    <button type="submit" disabled={uploading}
+                      className="flex items-center gap-2 px-5 py-2 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+                    >
+                      {uploading ? <><IconLoader /> Uploading...</> : <><IconUpload /> Upload & Save</>}
+                    </button>
+                    <button type="button" onClick={() => { setShowAddVideo(false); setVideoFile(null); setNewVideoTitle(""); }}
+                      className="px-5 py-2 bg-muted text-muted-foreground font-semibold text-sm rounded-lg hover:bg-muted/80 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
             )}
 
-            {/* Video List */}
             {loading ? (
-              <div className="text-center py-12"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div></div>
+              <div className="text-center py-12 text-muted-foreground">
+                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                Loading...
+              </div>
             ) : videos.length === 0 ? (
-              <div className="text-center py-12 bg-card border border-card-border rounded-xl text-muted-foreground">No videos yet. Add one above.</div>
+              <div className="text-center py-12 bg-card border border-card-border rounded-xl text-muted-foreground">
+                No videos yet. Add one above.
+              </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {videos.map((video) => {
                   const videoQs = questions.filter((q) => q.video_id === video.id);
-                  const isExpanded = expandedVideo === video.id;
+                  const isExp = expandedVideo === video.id;
                   return (
-                    <div key={video.id} className="bg-card border border-card-border rounded-xl overflow-hidden shadow-sm">
+                    <div key={video.id} className="bg-card border border-card-border rounded-xl overflow-hidden shadow-sm card-hover">
                       <div
-                        className="p-4 flex items-center justify-between cursor-pointer hover:bg-muted/30 transition-colors"
-                        onClick={() => setExpandedVideo(isExpanded ? null : video.id)}
+                        className="p-4 flex items-center justify-between cursor-pointer hover:bg-muted/20 transition-colors"
+                        onClick={() => setExpandedVideo(isExp ? null : video.id)}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-8 h-8 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center text-primary text-xs font-bold flex-shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-primary/15 border border-primary/25 flex items-center justify-center text-primary text-xs font-bold flex-shrink-0">
                             {video.order}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold text-foreground truncate">{video.title}</p>
+                            <p className="font-semibold text-foreground text-sm truncate">{video.title}</p>
                             <p className="text-xs text-muted-foreground truncate">{video.url}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3 flex-shrink-0">
-                          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">{videoQs.length} questions</span>
+                        <div className="flex items-center gap-3 flex-shrink-0 ml-3">
+                          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full hidden sm:block">
+                            {videoQs.length} question{videoQs.length !== 1 ? "s" : ""}
+                          </span>
                           <button
                             onClick={(e) => { e.stopPropagation(); deleteVideo(video.id); }}
-                            className="text-destructive hover:text-destructive/80 transition-colors p-1"
+                            className="text-muted-foreground hover:text-destructive transition-colors p-1.5 rounded-lg hover:bg-destructive/10"
                           >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
+                            <IconTrash />
                           </button>
-                          <svg className={`w-4 h-4 text-muted-foreground transition-transform ${isExpanded ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
+                          <span className={`text-muted-foreground transition-transform duration-200 ${isExp ? "rotate-180" : ""}`}>
+                            <IconChevronDown />
+                          </span>
                         </div>
                       </div>
 
-                      {isExpanded && (
-                        <div className="border-t border-border p-4 space-y-3">
-                          <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Questions</h4>
+                      {isExp && (
+                        <div className="border-t border-border/60 p-5 space-y-4 bg-background/30">
+                          {/* Video preview */}
+                          <div className="rounded-xl overflow-hidden border border-border/60 bg-black aspect-video max-h-48">
+                            <video src={video.url} controls className="w-full h-full object-contain" preload="metadata" />
+                          </div>
+
+                          <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Questions</h4>
                           {videoQs.length === 0 ? (
                             <p className="text-muted-foreground text-sm italic">No questions yet.</p>
                           ) : (
                             <div className="space-y-2">
                               {videoQs.map((q, qi) => (
-                                <div key={q.id} className="flex items-start justify-between gap-3 bg-background rounded-lg px-3 py-2.5 border border-border">
+                                <div key={q.id} className="flex items-start justify-between gap-3 bg-card rounded-lg px-3 py-2.5 border border-border/60">
                                   <div className="flex items-start gap-2 min-w-0">
-                                    <span className="text-primary text-xs font-bold mt-0.5 flex-shrink-0">Q{qi + 1}</span>
-                                    <span className="text-foreground text-sm">{q.question_text}</span>
+                                    <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded bg-primary/15 border border-primary/25 text-primary text-[10px] font-bold flex items-center justify-center">Q{qi + 1}</span>
+                                    <span className="text-foreground text-sm leading-relaxed">{q.question_text}</span>
                                   </div>
-                                  <button onClick={() => deleteQuestion(q.id)} className="text-destructive/70 hover:text-destructive flex-shrink-0 p-1">
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
+                                  <button onClick={() => deleteQuestion(q.id)} className="text-muted-foreground/60 hover:text-destructive flex-shrink-0 p-1 transition-colors">
+                                    <IconX />
                                   </button>
                                 </div>
                               ))}
@@ -324,18 +448,20 @@ export default function Admin() {
                           )}
 
                           {/* Add Question */}
-                          <form onSubmit={(e) => { setNewQVideoId(video.id); addQuestion(e); }} className="flex gap-2 mt-2">
+                          <form
+                            onSubmit={(e) => { setNewQVideoId(video.id); addQuestion(e, video.id); }}
+                            className="flex gap-2"
+                          >
                             <input
                               value={newQVideoId === video.id ? newQText : ""}
                               onChange={(e) => { setNewQVideoId(video.id); setNewQText(e.target.value); }}
-                              placeholder="Type a new question..."
-                              className="flex-1 px-3 py-2 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                              placeholder="Type a new question for this video..."
+                              className="flex-1 px-3 py-2 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
                             />
-                            <button
-                              type="submit" disabled={addingQ}
-                              className="px-4 py-2 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 disabled:opacity-50 flex-shrink-0"
+                            <button type="submit" disabled={addingQ}
+                              className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 flex-shrink-0 transition-colors"
                             >
-                              {addingQ ? "..." : "Add Q"}
+                              {addingQ ? <IconLoader /> : <IconPlus />} Add
                             </button>
                           </form>
                         </div>
@@ -348,26 +474,26 @@ export default function Admin() {
           </div>
         )}
 
-        {/* Responses Tab */}
+        {/* ── Responses Tab ── */}
         {tab === "responses" && (
-          <div className="space-y-6">
+          <div className="space-y-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-foreground">
-                Submissions <span className="text-muted-foreground font-normal text-base">({submissions.length})</span>
+              <h2 className="text-lg font-bold text-foreground">
+                Submissions <span className="text-muted-foreground font-normal text-sm ml-1">({submissions.length})</span>
               </h2>
               <button
                 onClick={exportCSV}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold text-sm rounded-lg hover:bg-green-500 transition-colors shadow-md"
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white font-semibold text-sm rounded-lg hover:bg-emerald-500 transition-colors shadow-md"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Export CSV
+                <IconDownload /> Export CSV
               </button>
             </div>
 
             {loading ? (
-              <div className="text-center py-12"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div></div>
+              <div className="text-center py-12 text-muted-foreground">
+                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                Loading...
+              </div>
             ) : submissions.length === 0 ? (
               <div className="text-center py-12 bg-card border border-card-border rounded-xl text-muted-foreground">
                 No submissions yet.
@@ -378,13 +504,13 @@ export default function Admin() {
                   const subResponses = responses.filter((r) => r.submission_id === sub.id);
                   const isOpen = expandedSub === sub.id;
                   return (
-                    <div key={sub.id} className="bg-card border border-card-border rounded-xl overflow-hidden shadow-sm">
+                    <div key={sub.id} className="bg-card border border-card-border rounded-xl overflow-hidden shadow-sm card-hover">
                       <div
                         className="p-4 flex items-center justify-between cursor-pointer hover:bg-muted/20 transition-colors"
                         onClick={() => setExpandedSub(isOpen ? null : sub.id)}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/25 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
                             {sub.name.charAt(0).toUpperCase()}
                           </div>
                           <div className="min-w-0">
@@ -392,47 +518,44 @@ export default function Admin() {
                             <p className="text-xs text-muted-foreground">{sub.district}, {sub.state}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3 flex-shrink-0">
-                          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full capitalize ${
+                        <div className="flex items-center gap-3 flex-shrink-0 ml-3">
+                          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full capitalize border ${
                             sub.designation === "coach"
-                              ? "bg-violet-500/20 text-violet-400 border border-violet-500/30"
-                              : "bg-primary/20 text-primary border border-primary/30"
+                              ? "bg-violet-500/15 text-violet-400 border-violet-500/25"
+                              : "bg-primary/15 text-primary border-primary/25"
                           }`}>
                             {sub.designation}
                           </span>
                           <span className="text-xs text-muted-foreground hidden md:block">
                             {new Date(sub.submitted_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                           </span>
-                          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">{subResponses.length} answers</span>
-                          <svg className={`w-4 h-4 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
+                          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full hidden sm:block">
+                            {subResponses.length} answers
+                          </span>
+                          <span className={`text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>
+                            <IconChevronDown />
+                          </span>
                         </div>
                       </div>
 
                       {isOpen && (
-                        <div className="border-t border-border p-5 space-y-5">
-                          {/* Person Details */}
+                        <div className="border-t border-border/60 p-5 space-y-5 bg-background/30">
+                          {/* Details */}
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {[
-                              { label: "Full Name", value: sub.name },
-                              { label: "District", value: sub.district },
-                              { label: "State", value: sub.state },
-                              { label: "Designation", value: sub.designation },
-                            ].map((detail) => (
-                              <div key={detail.label} className="bg-background border border-border rounded-lg p-3">
-                                <p className="text-xs text-muted-foreground mb-1">{detail.label}</p>
-                                <p className="text-foreground font-semibold text-sm capitalize">{detail.value}</p>
+                            {[["Name", sub.name], ["District", sub.district], ["State", sub.state], ["Designation", sub.designation]].map(([label, value]) => (
+                              <div key={label} className="bg-card border border-border/60 rounded-lg p-3">
+                                <p className="text-xs text-muted-foreground mb-1">{label}</p>
+                                <p className="text-foreground font-semibold text-sm capitalize">{value}</p>
                               </div>
                             ))}
                           </div>
-                          <div className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground">
                             Submitted: {new Date(sub.submitted_at).toLocaleString("en-IN")}
-                          </div>
+                          </p>
 
-                          {/* Responses grouped by video */}
+                          {/* Answers grouped by video */}
                           <div className="space-y-4">
-                            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Answers</h4>
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Answers</p>
                             {videos.map((video) => {
                               const videoQs = questions.filter((q) => q.video_id === video.id);
                               const videoResps = subResponses.filter((r) => videoQs.some((q) => q.id === r.question_id));
@@ -444,12 +567,12 @@ export default function Admin() {
                                     const resp = subResponses.find((r) => r.question_id === q.id);
                                     if (!resp) return null;
                                     return (
-                                      <div key={q.id} className="bg-background border border-border rounded-lg p-4">
-                                        <p className="text-sm font-semibold text-foreground mb-2">
-                                          <span className="text-primary mr-1">Q{qi + 1}.</span>
+                                      <div key={q.id} className="bg-card border border-border/60 rounded-xl p-4">
+                                        <p className="text-sm font-semibold text-foreground mb-2 flex items-start gap-2">
+                                          <span className="flex-shrink-0 mt-0.5 w-5 h-5 rounded bg-primary/15 border border-primary/25 text-primary text-[10px] font-bold flex items-center justify-center">Q{qi + 1}</span>
                                           {q.question_text}
                                         </p>
-                                        <div className="bg-muted/40 rounded-lg p-3">
+                                        <div className="bg-background rounded-lg p-3 border border-border/40">
                                           <p className="text-foreground text-sm leading-relaxed whitespace-pre-wrap">{resp.answer_text}</p>
                                         </div>
                                       </div>
