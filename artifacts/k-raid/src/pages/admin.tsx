@@ -274,20 +274,20 @@ export default function Admin() {
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[500px] h-[180px] bg-primary/6 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/60">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <header className="site-header relative">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center font-black text-white text-base glow-primary-sm">K</div>
-            <div>
-              <span className="text-base font-black tracking-widest text-white">K-RAID</span>
-              <span className="ml-2 text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">Admin</span>
+            <div className="header-logo-icon">K</div>
+            <div className="flex items-center gap-2.5">
+              <span className="header-logo-text">K-RAID</span>
+              <span className="header-admin-badge">Admin</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <a href="/" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground px-3 py-1.5 border border-border rounded-lg hover:border-border/80 transition-colors">
+            <a href="/" className="header-nav-btn">
               <IconEye /> View Site
             </a>
-            <button onClick={() => setAuthed(false)} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive px-3 py-1.5 border border-border rounded-lg hover:border-destructive/50 transition-colors">
+            <button onClick={() => setAuthed(false)} className="header-nav-btn danger">
               <IconLogOut /> Logout
             </button>
           </div>

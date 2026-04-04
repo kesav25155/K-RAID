@@ -160,18 +160,18 @@ export default function Home() {
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-primary/8 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/60">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <header className="site-header relative">
+        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center font-black text-white text-base glow-primary-sm">K</div>
-            <div>
-              <span className="text-lg font-black tracking-widest text-white">K-RAID</span>
-              <span className="ml-2 text-xs text-muted-foreground hidden sm:inline">Kabaddi Research Study</span>
+            <div className="header-logo-icon">K</div>
+            <div className="flex items-center gap-2.5">
+              <span className="header-logo-text">K-RAID</span>
+              <span className="text-xs text-muted-foreground hidden sm:inline tracking-wide">Kabaddi Research Study</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
-            <span>Data Collection Active</span>
+          <div className="header-status-pill">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+            Data Collection Active
           </div>
         </div>
       </header>
