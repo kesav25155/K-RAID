@@ -150,18 +150,6 @@ export default function Admin() {
     setLoadingPreview((prev) => ({ ...prev, [videoId]: false }));
   }
 
-  function readFileAsBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = () => reject(reader.error);
-      reader.onprogress = (e) => {
-        if (e.lengthComputable) setUploadProgress(Math.round((e.loaded / e.total) * 85));
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
   async function addVideo(e: React.FormEvent) {
     e.preventDefault();
     if (!newVideoTitle.trim()) {
@@ -177,17 +165,30 @@ export default function Admin() {
       return;
     }
     setUploading(true);
-    setUploadProgress(5);
+    setUploadProgress(10);
 
-    let dataUrl: string;
-    try {
-      dataUrl = await readFileAsBase64(videoFile);
-    } catch {
+    // Ensure the storage bucket exists
+    await supabase.storage.createBucket("videos", { public: true }).catch(() => {});
+
+    // Upload file to Supabase Storage
+    const ext = videoFile.name.split(".").pop() || "mp4";
+    const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: uploadErr } = await supabase.storage
+      .from("videos")
+      .upload(fileName, videoFile, { cacheControl: "3600", upsert: false });
+
+    if (uploadErr) {
       setUploading(false);
       setUploadProgress(0);
-      toast({ title: "Read Failed", description: "Could not read the video file.", variant: "destructive" });
+      toast({ title: "Upload Failed", description: uploadErr.message, variant: "destructive" });
       return;
     }
+    setUploadProgress(80);
+
+    // Get the public URL
+    const { data: urlData } = supabase.storage.from("videos").getPublicUrl(fileName);
+    const publicUrl = urlData.publicUrl;
+
     setUploadProgress(90);
 
     const questionsJson: QuestionItem[] = [
@@ -198,7 +199,7 @@ export default function Admin() {
     const maxOrder = videos.reduce((m, v) => Math.max(m, v.order), 0);
     const { error: insertErr } = await supabase.from("videos").insert([{
       title: newVideoTitle.trim(),
-      url: dataUrl,
+      url: publicUrl,
       order: maxOrder + 1,
       questions: questionsJson,
     }]);
@@ -207,6 +208,8 @@ export default function Admin() {
     setUploadProgress(0);
 
     if (insertErr) {
+      // Rollback storage upload if DB insert fails
+      await supabase.storage.from("videos").remove([fileName]);
       toast({ title: "Database Error", description: insertErr.message, variant: "destructive" });
       return;
     }
@@ -214,7 +217,7 @@ export default function Admin() {
     setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setVideoFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
     setShowAddVideo(false);
-    toast({ title: "Video saved", description: `"${newVideoTitle.trim()}" stored in database successfully.` });
+    toast({ title: "Video saved", description: `"${newVideoTitle.trim()}" uploaded and saved successfully.` });
     fetchAll();
   }
 
