@@ -13,7 +13,7 @@ const INDIAN_STATES = [
 ];
 
 type QuestionItem = { question_text: string; order: number };
-type Video = { id: number; title: string; order: number; questions: QuestionItem[] };
+type Video = { id: number; title: string; order: number; questions: QuestionItem[]; url?: string };
 type Step = "welcome" | "details" | "video" | "thankyou";
 
 function IconLoader() {
@@ -84,8 +84,6 @@ export default function Home() {
   const [designation, setDesignation] = useState<"player" | "coach" | "">("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
-  const [videoSrcs, setVideoSrcs] = useState<Record<number, string>>({});
-  const [loadingVideo, setLoadingVideo] = useState<Record<number, boolean>>({});
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -99,22 +97,10 @@ export default function Home() {
     setLoading(true);
     const { data: vids } = await supabase
       .from("videos")
-      .select("id,title,order,questions")
+      .select("id,title,order,questions,url")
       .order("order", { ascending: true });
     setVideos((vids || []).map((v) => ({ ...v, questions: Array.isArray(v.questions) ? v.questions : [] })));
     setLoading(false);
-  }
-
-  async function loadVideoSrc(videoId: number) {
-    if (videoSrcs[videoId] || loadingVideo[videoId]) return;
-    setLoadingVideo((prev) => ({ ...prev, [videoId]: true }));
-    const { data, error } = await supabase.from("videos").select("url").eq("id", videoId).single();
-    if (error || !data?.url) {
-      toast({ title: "Failed to load video", description: "Could not retrieve video data.", variant: "destructive" });
-    } else {
-      setVideoSrcs((prev) => ({ ...prev, [videoId]: data.url }));
-    }
-    setLoadingVideo((prev) => ({ ...prev, [videoId]: false }));
   }
 
   function answerKey(videoId: number, qIndex: number) {
@@ -205,7 +191,6 @@ export default function Home() {
     setVideoIndex(0);
     setName(""); setDistrict(""); setState(""); setDesignation("");
     setAnswers({});
-    setVideoSrcs({});
     scrollTop();
   }
 
@@ -378,33 +363,15 @@ export default function Home() {
             {/* Video player */}
             <div className="bg-card border border-card-border rounded-2xl overflow-hidden shadow-lg">
               <div className="aspect-video bg-black relative">
-                {videoSrcs[currentVideo.id] ? (
-                  <video controls autoPlay className="w-full h-full" src={videoSrcs[currentVideo.id]}>
+                {currentVideo.url ? (
+                  <video controls autoPlay className="w-full h-full" src={currentVideo.url}>
                     Your browser does not support the video tag.
                   </video>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => loadVideoSrc(currentVideo.id)}
-                    disabled={loadingVideo[currentVideo.id]}
-                    className="absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-3 hover:bg-white/5 transition-colors group"
-                  >
-                    {loadingVideo[currentVideo.id] ? (
-                      <>
-                        <div className="w-14 h-14 border-2 border-primary border-t-transparent rounded-full animate-spin glow-primary-sm" />
-                        <span className="text-muted-foreground text-sm">Loading video...</span>
-                      </>
-                    ) : (
-                      <>
-                        <div className="w-20 h-20 rounded-full bg-primary/20 border-2 border-primary/50 flex items-center justify-center group-hover:bg-primary/30 group-hover:border-primary transition-all glow-primary-sm">
-                          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-primary ml-1.5">
-                            <polygon points="5 3 19 12 5 21 5 3"/>
-                          </svg>
-                        </div>
-                        <span className="text-muted-foreground text-sm group-hover:text-foreground transition-colors">Click to load &amp; play video</span>
-                      </>
-                    )}
-                  </button>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                    <div className="w-14 h-14 border-2 border-primary border-t-transparent rounded-full animate-spin glow-primary-sm" />
+                    <span className="text-muted-foreground text-sm">Loading video...</span>
+                  </div>
                 )}
               </div>
 

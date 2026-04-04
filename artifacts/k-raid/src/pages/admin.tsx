@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
 type QuestionItem = { question_text: string; order: number };
-type Video = { id: number; title: string; order: number; questions: QuestionItem[] };
+type Video = { id: number; title: string; order: number; questions: QuestionItem[]; url?: string };
 type Submission = { id: number; name: string; district: string; state: string; designation: string; submitted_at: string };
 type Response = { id: number; submission_id: number; video_id: number; question_index: number; question_text: string; answer_text: string };
 
@@ -132,7 +132,7 @@ export default function Admin() {
   async function fetchAll() {
     setLoading(true);
     const [v, s, r] = await Promise.all([
-      supabase.from("videos").select("id,title,order,questions").order("order"),
+      supabase.from("videos").select("id,title,order,questions,url").order("order"),
       supabase.from("submissions").select("*").order("submitted_at", { ascending: false }),
       supabase.from("responses").select("*"),
     ]);
@@ -150,18 +150,6 @@ export default function Admin() {
     setLoadingPreview((prev) => ({ ...prev, [videoId]: false }));
   }
 
-  function readFileAsBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = () => reject(reader.error);
-      reader.onprogress = (e) => {
-        if (e.lengthComputable) setUploadProgress(Math.round((e.loaded / e.total) * 80));
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
   async function addVideo(e: React.FormEvent) {
     e.preventDefault();
     if (!newVideoTitle.trim()) {
@@ -177,18 +165,31 @@ export default function Admin() {
       return;
     }
     setUploading(true);
-    setUploadProgress(5);
+    setUploadProgress(10);
 
-    let dataUrl: string;
-    try {
-      dataUrl = await readFileAsBase64(videoFile);
-    } catch {
+    // Ensure the storage bucket exists
+    await supabase.storage.createBucket("videos", { public: true }).catch(() => {});
+
+    // Upload file to Supabase Storage
+    const ext = videoFile.name.split(".").pop() || "mp4";
+    const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: uploadErr } = await supabase.storage
+      .from("videos")
+      .upload(fileName, videoFile, { cacheControl: "3600", upsert: false });
+
+    if (uploadErr) {
       setUploading(false);
       setUploadProgress(0);
-      toast({ title: "Read Failed", description: "Could not read the video file.", variant: "destructive" });
+      toast({ title: "Upload Failed", description: uploadErr.message, variant: "destructive" });
       return;
     }
-    setUploadProgress(85);
+    setUploadProgress(80);
+
+    // Get the public URL
+    const { data: urlData } = supabase.storage.from("videos").getPublicUrl(fileName);
+    const publicUrl = urlData.publicUrl;
+
+    setUploadProgress(90);
 
     const questionsJson: QuestionItem[] = [
       { question_text: q1Text.trim(), order: 1 },
@@ -198,7 +199,7 @@ export default function Admin() {
     const maxOrder = videos.reduce((m, v) => Math.max(m, v.order), 0);
     const { error: insertErr } = await supabase.from("videos").insert([{
       title: newVideoTitle.trim(),
-      url: dataUrl,
+      url: publicUrl,
       order: maxOrder + 1,
       questions: questionsJson,
     }]);
@@ -207,6 +208,8 @@ export default function Admin() {
     setUploadProgress(0);
 
     if (insertErr) {
+      // Rollback storage upload if DB insert fails
+      await supabase.storage.from("videos").remove([fileName]);
       toast({ title: "Database Error", description: insertErr.message, variant: "destructive" });
       return;
     }
@@ -214,13 +217,23 @@ export default function Admin() {
     setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setVideoFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
     setShowAddVideo(false);
-    toast({ title: "Video saved", description: `"${newVideoTitle.trim()}" with 2 questions stored in database.` });
+    toast({ title: "Video saved", description: `"${newVideoTitle.trim()}" uploaded and saved successfully.` });
     fetchAll();
   }
 
   async function deleteVideo(id: number) {
     if (!confirm("Delete this video and all its responses?")) return;
+    // Get the URL first so we can remove from storage too
+    const video = videos.find((v) => v.id === id);
     await supabase.from("videos").delete().eq("id", id);
+    if (video) {
+      // Extract the filename from the storage URL and delete it
+      try {
+        const url = new URL(video.url || "");
+        const parts = url.pathname.split("/videos/");
+        if (parts[1]) await supabase.storage.from("videos").remove([parts[1]]);
+      } catch {}
+    }
     toast({ title: "Video deleted" });
     fetchAll();
   }
@@ -432,7 +445,7 @@ export default function Admin() {
                   {uploading && (
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{uploadProgress < 85 ? "Encoding video..." : "Saving to database..."}</span>
+                        <span>{uploadProgress < 80 ? "Uploading to storage..." : "Saving to database..."}</span>
                         <span>{uploadProgress}%</span>
                       </div>
                       <div className="h-1.5 bg-muted rounded-full overflow-hidden">
