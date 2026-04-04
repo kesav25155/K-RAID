@@ -87,6 +87,29 @@ CREATE POLICY "Public insert questions" ON questions FOR INSERT WITH CHECK (true
 CREATE POLICY "Public delete questions" ON questions FOR DELETE USING (true);
 ```
 
+## Supabase Storage Setup
+
+Videos are stored in Supabase Storage (not as base64 in the DB). Run this SQL in Supabase SQL Editor:
+
+```sql
+-- Add storage_path column to videos table (if upgrading from base64 approach)
+ALTER TABLE videos ADD COLUMN IF NOT EXISTS storage_path TEXT;
+
+-- Create public videos storage bucket
+INSERT INTO storage.buckets (id, name, public) VALUES ('videos', 'videos', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Allow public uploads and reads on the videos bucket
+CREATE POLICY IF NOT EXISTS "Public video uploads" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'videos');
+
+CREATE POLICY IF NOT EXISTS "Public video reads" ON storage.objects
+  FOR SELECT USING (bucket_id = 'videos');
+
+CREATE POLICY IF NOT EXISTS "Public video deletes" ON storage.objects
+  FOR DELETE USING (bucket_id = 'videos');
+```
+
 ## Key Commands
 
 - `pnpm run typecheck` — full typecheck across all packages
