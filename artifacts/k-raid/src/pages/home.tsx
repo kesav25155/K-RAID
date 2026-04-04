@@ -364,9 +364,18 @@ export default function Home() {
             <div className="bg-card border border-card-border rounded-2xl overflow-hidden shadow-lg">
               <div className="aspect-video bg-black relative">
                 {currentVideo.url ? (
-                  <video controls autoPlay className="w-full h-full" src={currentVideo.url}>
-                    Your browser does not support the video tag.
-                  </video>
+                  currentVideo.url.includes("drive.google.com") ? (
+                    <iframe
+                      src={currentVideo.url}
+                      className="w-full h-full"
+                      allow="autoplay"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <video controls autoPlay className="w-full h-full" src={currentVideo.url}>
+                      Your browser does not support the video tag.
+                    </video>
+                  )
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                     <div className="w-14 h-14 border-2 border-primary border-t-transparent rounded-full animate-spin glow-primary-sm" />

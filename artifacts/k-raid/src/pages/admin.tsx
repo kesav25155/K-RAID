@@ -110,11 +110,26 @@ export default function Admin() {
   const [newVideoTitle, setNewVideoTitle] = useState("");
   const [q1Text, setQ1Text] = useState("");
   const [q2Text, setQ2Text] = useState("");
+  const [videoSource, setVideoSource] = useState<"drive" | "upload">("drive");
+  const [driveLink, setDriveLink] = useState("");
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showAddVideo, setShowAddVideo] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function parseDriveId(link: string): string | null {
+    const patterns = [
+      /\/file\/d\/([a-zA-Z0-9_-]+)/,
+      /[?&]id=([a-zA-Z0-9_-]+)/,
+      /open\?id=([a-zA-Z0-9_-]+)/,
+    ];
+    for (const re of patterns) {
+      const m = link.match(re);
+      if (m) return m[1];
+    }
+    return null;
+  }
 
   // Edit questions inline
   const [editingVideoId, setEditingVideoId] = useState<number | null>(null);
@@ -160,36 +175,48 @@ export default function Admin() {
       toast({ title: "Missing questions", description: "Both questions are required.", variant: "destructive" });
       return;
     }
-    if (!videoFile) {
-      toast({ title: "No video selected", description: "Please summon a video file.", variant: "destructive" });
-      return;
+
+    let finalUrl = "";
+
+    if (videoSource === "drive") {
+      if (!driveLink.trim()) {
+        toast({ title: "No Drive link", description: "Please paste a Google Drive share link.", variant: "destructive" });
+        return;
+      }
+      const fileId = parseDriveId(driveLink.trim());
+      if (!fileId) {
+        toast({ title: "Invalid Drive link", description: "Could not extract a file ID from that link. Make sure you copy the share link from Google Drive.", variant: "destructive" });
+        return;
+      }
+      finalUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+    } else {
+      if (!videoFile) {
+        toast({ title: "No video selected", description: "Please select a video file.", variant: "destructive" });
+        return;
+      }
+      setUploading(true);
+      setUploadProgress(10);
+
+      await supabase.storage.createBucket("videos", { public: true }).catch(() => {});
+
+      const ext = videoFile.name.split(".").pop() || "mp4";
+      const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: uploadErr } = await supabase.storage
+        .from("videos")
+        .upload(fileName, videoFile, { cacheControl: "3600", upsert: false });
+
+      if (uploadErr) {
+        setUploading(false);
+        setUploadProgress(0);
+        toast({ title: "Upload Failed", description: uploadErr.message, variant: "destructive" });
+        return;
+      }
+      setUploadProgress(85);
+      const { data: urlData } = supabase.storage.from("videos").getPublicUrl(fileName);
+      finalUrl = urlData.publicUrl;
     }
-    setUploading(true);
-    setUploadProgress(10);
 
-    // Ensure the storage bucket exists
-    await supabase.storage.createBucket("videos", { public: true }).catch(() => {});
-
-    // Upload file to Supabase Storage
-    const ext = videoFile.name.split(".").pop() || "mp4";
-    const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error: uploadErr } = await supabase.storage
-      .from("videos")
-      .upload(fileName, videoFile, { cacheControl: "3600", upsert: false });
-
-    if (uploadErr) {
-      setUploading(false);
-      setUploadProgress(0);
-      toast({ title: "Upload Failed", description: uploadErr.message, variant: "destructive" });
-      return;
-    }
-    setUploadProgress(80);
-
-    // Get the public URL
-    const { data: urlData } = supabase.storage.from("videos").getPublicUrl(fileName);
-    const publicUrl = urlData.publicUrl;
-
-    setUploadProgress(90);
+    setUploadProgress(95);
 
     const questionsJson: QuestionItem[] = [
       { question_text: q1Text.trim(), order: 1 },
@@ -199,7 +226,7 @@ export default function Admin() {
     const maxOrder = videos.reduce((m, v) => Math.max(m, v.order), 0);
     const { error: insertErr } = await supabase.from("videos").insert([{
       title: newVideoTitle.trim(),
-      url: publicUrl,
+      url: finalUrl,
       order: maxOrder + 1,
       questions: questionsJson,
     }]);
@@ -208,16 +235,14 @@ export default function Admin() {
     setUploadProgress(0);
 
     if (insertErr) {
-      // Rollback storage upload if DB insert fails
-      await supabase.storage.from("videos").remove([fileName]);
       toast({ title: "Database Error", description: insertErr.message, variant: "destructive" });
       return;
     }
 
-    setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setVideoFile(null);
+    setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setVideoFile(null); setDriveLink("");
     if (fileInputRef.current) fileInputRef.current.value = "";
     setShowAddVideo(false);
-    toast({ title: "Video saved", description: `"${newVideoTitle.trim()}" uploaded and saved successfully.` });
+    toast({ title: "Video saved", description: `"${newVideoTitle.trim()}" added successfully.` });
     fetchAll();
   }
 
@@ -366,8 +391,8 @@ export default function Admin() {
             {showAddVideo && (
               <div className="bg-card border border-primary/30 rounded-xl p-5 shadow-lg glow-primary-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-foreground text-sm">Upload New Video</h3>
-                  <button type="button" onClick={() => { setShowAddVideo(false); setVideoFile(null); setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); }}
+                  <h3 className="font-bold text-foreground text-sm">Add New Video</h3>
+                  <button type="button" onClick={() => { setShowAddVideo(false); setVideoFile(null); setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setDriveLink(""); }}
                     className="text-muted-foreground hover:text-foreground">
                     <IconX />
                   </button>
@@ -383,36 +408,62 @@ export default function Admin() {
                     />
                   </div>
 
-                  {/* Video File */}
+                  {/* Video Source Toggle */}
                   <div>
-                    <label className="block text-sm font-semibold text-foreground mb-1.5">Video File <span className="text-destructive">*</span></label>
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-primary/10 border border-primary/30 text-primary font-semibold text-sm rounded-lg hover:bg-primary/20 hover:border-primary/60 transition-all"
-                      >
-                        <IconFilm />
-                        Summon Video
-                      </button>
-                      {videoFile ? (
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <span className="text-foreground text-sm font-medium truncate">{videoFile.name}</span>
-                          <span className="text-muted-foreground text-xs flex-shrink-0">{(videoFile.size / (1024 * 1024)).toFixed(1)} MB</span>
-                          <button type="button" onClick={() => { setVideoFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
-                            className="text-muted-foreground hover:text-destructive flex-shrink-0 transition-colors">
-                            <IconX />
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">No file selected</span>
-                      )}
-                      <input
-                        ref={fileInputRef} type="file" accept="video/*" className="hidden"
-                        onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
-                      />
+                    <label className="block text-sm font-semibold text-foreground mb-1.5">Video Source <span className="text-destructive">*</span></label>
+                    <div className="flex gap-2 mb-3">
+                      {(["drive", "upload"] as const).map((src) => (
+                        <button
+                          key={src} type="button" onClick={() => setVideoSource(src)}
+                          className={`flex-1 py-2 rounded-lg border text-sm font-semibold capitalize transition-all ${
+                            videoSource === src
+                              ? "bg-primary border-primary text-white glow-primary-sm"
+                              : "bg-background border-input text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                          }`}
+                        >
+                          {src === "drive" ? "📁 Google Drive" : "⬆ Upload File"}
+                        </button>
+                      ))}
                     </div>
-                    <p className="text-xs text-muted-foreground/60 mt-1.5">Supports MP4, MOV, WebM</p>
+
+                    {videoSource === "drive" ? (
+                      <div>
+                        <input
+                          value={driveLink} onChange={(e) => setDriveLink(e.target.value)}
+                          placeholder="Paste Google Drive share link here..."
+                          className="w-full px-3 py-2.5 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
+                        />
+                        <p className="text-xs text-muted-foreground/60 mt-1.5">
+                          In Google Drive: right-click the video → Share → Copy link. The file must be set to "Anyone with the link can view".
+                        </p>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex items-center gap-2 px-5 py-2.5 bg-primary/10 border border-primary/30 text-primary font-semibold text-sm rounded-lg hover:bg-primary/20 hover:border-primary/60 transition-all"
+                          >
+                            <IconFilm /> Choose File
+                          </button>
+                          {videoFile ? (
+                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                              <span className="text-foreground text-sm font-medium truncate">{videoFile.name}</span>
+                              <span className="text-muted-foreground text-xs flex-shrink-0">{(videoFile.size / (1024 * 1024)).toFixed(1)} MB</span>
+                              <button type="button" onClick={() => { setVideoFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
+                                className="text-muted-foreground hover:text-destructive flex-shrink-0 transition-colors">
+                                <IconX />
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">No file selected</span>
+                          )}
+                          <input ref={fileInputRef} type="file" accept="video/*" className="hidden" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} />
+                        </div>
+                        <p className="text-xs text-muted-foreground/60 mt-1.5">Supports MP4, MOV, WebM</p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Question 1 */}
@@ -522,21 +573,16 @@ export default function Admin() {
                         <div className="border-t border-border/60 p-5 space-y-4 bg-background/30">
                           {/* Video preview */}
                           <div className="rounded-xl overflow-hidden border border-border/60 bg-black aspect-video max-h-48 relative">
-                            {previewSrcs[video.id] ? (
-                              <video src={previewSrcs[video.id]} controls autoPlay className="w-full h-full object-contain" />
+                            {video.url ? (
+                              video.url.includes("drive.google.com") ? (
+                                <iframe src={video.url} className="w-full h-full" allow="autoplay" allowFullScreen />
+                              ) : (
+                                <video src={video.url} controls className="w-full h-full object-contain" />
+                              )
                             ) : (
-                              <button
-                                type="button"
-                                onClick={() => loadPreview(video.id)}
-                                disabled={loadingPreview[video.id]}
-                                className="absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-colors"
-                              >
-                                {loadingPreview[video.id] ? (
-                                  <><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /><span className="text-muted-foreground text-xs">Loading...</span></>
-                                ) : (
-                                  <><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-primary"><polygon points="5 3 19 12 5 21 5 3"/></svg><span className="text-muted-foreground text-xs">Preview video</span></>
-                                )}
-                              </button>
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="text-muted-foreground text-xs">No video URL</span>
+                              </div>
                             )}
                           </div>
 
