@@ -221,7 +221,7 @@ export default function Home() {
       <header className="site-header relative pt-1">
         <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
-            <div className="header-logo-icon">K</div>
+            <img src="/logo.png" alt="K-RAID" className="header-logo-img" />
             <div className="flex items-center gap-2.5">
               <span className="header-logo-text">K-RAID</span>
               <span className="text-xs text-muted-foreground hidden sm:inline tracking-wide">Kabaddi Research Study</span>
@@ -247,6 +247,12 @@ export default function Home() {
         {/* ══ WELCOME ══ */}
         {step === "welcome" && (
           <div className="flex flex-col items-center justify-center min-h-[70vh] text-center">
+            <img
+              src="/logo.png"
+              alt="K-RAID Logo"
+              className="w-28 h-28 rounded-full object-cover mb-8 glow-primary"
+              style={{border: "2px solid hsl(28 65% 48% / 0.5)"}}
+            />
             <p className="text-xs font-semibold tracking-[0.3em] text-primary uppercase mb-6">Final Year Research Project &mdash; Data Collection</p>
             <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 leading-none">
               <span className="text-white">Welcome to </span>

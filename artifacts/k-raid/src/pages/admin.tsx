@@ -70,7 +70,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-primary/8 rounded-full blur-3xl pointer-events-none" />
       <div className="w-full max-w-sm relative">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center font-black text-white text-2xl mx-auto mb-4 glow-primary-sm">K</div>
+          <img src="/logo.png" alt="K-RAID" className="w-16 h-16 rounded-full object-cover mx-auto mb-4 glow-primary-sm" style={{border: "2px solid hsl(28 65% 48% / 0.5)"}} />
           <h1 className="text-2xl font-black text-foreground">Management Portal</h1>
           <p className="text-muted-foreground text-sm mt-1">K-RAID Administration</p>
         </div>
@@ -292,7 +292,7 @@ export default function Admin() {
       <header className="site-header relative">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
-            <div className="header-logo-icon">K</div>
+            <img src="/logo.png" alt="K-RAID" className="header-logo-img" />
             <div className="flex items-center gap-2.5">
               <span className="header-logo-text">K-RAID</span>
               <span className="header-admin-badge">Admin</span>
