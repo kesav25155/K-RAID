@@ -140,6 +140,18 @@ export default function Admin() {
     setLoading(false);
   }
 
+  function readFileAsBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.onprogress = (e) => {
+        if (e.lengthComputable) setUploadProgress(Math.round((e.loaded / e.total) * 80));
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function addVideo(e: React.FormEvent) {
     e.preventDefault();
     if (!newVideoTitle.trim()) {
@@ -155,25 +167,18 @@ export default function Admin() {
       return;
     }
     setUploading(true);
-    setUploadProgress(10);
+    setUploadProgress(5);
 
-    const ext = videoFile.name.split(".").pop();
-    const fileName = `video_${Date.now()}.${ext}`;
-
-    const { error: uploadErr } = await supabase.storage
-      .from("videos")
-      .upload(fileName, videoFile, { contentType: videoFile.type, upsert: false });
-
-    if (uploadErr) {
+    let dataUrl: string;
+    try {
+      dataUrl = await readFileAsBase64(videoFile);
+    } catch {
       setUploading(false);
       setUploadProgress(0);
-      toast({ title: "Upload Failed", description: uploadErr.message, variant: "destructive" });
+      toast({ title: "Read Failed", description: "Could not read the video file.", variant: "destructive" });
       return;
     }
-    setUploadProgress(70);
-
-    const { data: urlData } = supabase.storage.from("videos").getPublicUrl(fileName);
-    const publicUrl = urlData.publicUrl;
+    setUploadProgress(85);
 
     const questionsJson: QuestionItem[] = [
       { question_text: q1Text.trim(), order: 1 },
@@ -183,7 +188,7 @@ export default function Admin() {
     const maxOrder = videos.reduce((m, v) => Math.max(m, v.order), 0);
     const { error: insertErr } = await supabase.from("videos").insert([{
       title: newVideoTitle.trim(),
-      url: publicUrl,
+      url: dataUrl,
       order: maxOrder + 1,
       questions: questionsJson,
     }]);
@@ -199,7 +204,7 @@ export default function Admin() {
     setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setVideoFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
     setShowAddVideo(false);
-    toast({ title: "Video added successfully", description: `"${newVideoTitle.trim()}" with 2 questions saved.` });
+    toast({ title: "Video saved to database", description: `"${newVideoTitle.trim()}" with 2 questions stored in DB.` });
     fetchAll();
   }
 
@@ -417,7 +422,7 @@ export default function Admin() {
                   {uploading && (
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>Uploading to storage...</span>
+                        <span>{uploadProgress < 85 ? "Encoding video..." : "Saving to database..."}</span>
                         <span>{uploadProgress}%</span>
                       </div>
                       <div className="h-1.5 bg-muted rounded-full overflow-hidden">
@@ -430,7 +435,7 @@ export default function Admin() {
                     <button type="submit" disabled={uploading}
                       className="flex items-center gap-2 px-5 py-2 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
                     >
-                      {uploading ? <><IconLoader /> Uploading...</> : <><IconUpload /> Upload & Save</>}
+                      {uploading ? <><IconLoader /> Processing...</> : <><IconUpload /> Save to Database</>}
                     </button>
                     <button type="button" onClick={() => { setShowAddVideo(false); setVideoFile(null); setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); }}
                       className="px-5 py-2 bg-muted text-muted-foreground font-semibold text-sm rounded-lg hover:bg-muted/80 transition-colors"
@@ -468,7 +473,10 @@ export default function Admin() {
                           </div>
                           <div className="min-w-0">
                             <p className="font-semibold text-foreground text-sm truncate">{video.title}</p>
-                            <p className="text-xs text-muted-foreground truncate">{video.url}</p>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+                              Stored in database
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3 flex-shrink-0 ml-3">
