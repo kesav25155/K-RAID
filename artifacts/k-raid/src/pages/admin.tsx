@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
@@ -30,9 +30,6 @@ function IconX() {
 }
 function IconLogOut() {
   return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>;
-}
-function IconUpload() {
-  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>;
 }
 function IconLoader() {
   return <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>;
@@ -110,13 +107,9 @@ export default function Admin() {
   const [newVideoTitle, setNewVideoTitle] = useState("");
   const [q1Text, setQ1Text] = useState("");
   const [q2Text, setQ2Text] = useState("");
-  const [videoSource, setVideoSource] = useState<"drive" | "upload">("drive");
   const [driveLink, setDriveLink] = useState("");
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [saving, setSaving] = useState(false);
   const [showAddVideo, setShowAddVideo] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function parseDriveId(link: string): string | null {
     const patterns = [
@@ -139,8 +132,6 @@ export default function Admin() {
 
   const [expandedSub, setExpandedSub] = useState<number | null>(null);
   const [expandedVideo, setExpandedVideo] = useState<number | null>(null);
-  const [previewSrcs, setPreviewSrcs] = useState<Record<number, string>>({});
-  const [loadingPreview, setLoadingPreview] = useState<Record<number, boolean>>({});
 
   useEffect(() => { if (authed) fetchAll(); }, [authed]);
 
@@ -157,18 +148,14 @@ export default function Admin() {
     setLoading(false);
   }
 
-  async function loadPreview(videoId: number) {
-    if (previewSrcs[videoId] || loadingPreview[videoId]) return;
-    setLoadingPreview((prev) => ({ ...prev, [videoId]: true }));
-    const { data } = await supabase.from("videos").select("url").eq("id", videoId).single();
-    if (data?.url) setPreviewSrcs((prev) => ({ ...prev, [videoId]: data.url }));
-    setLoadingPreview((prev) => ({ ...prev, [videoId]: false }));
-  }
-
   async function addVideo(e: React.FormEvent) {
     e.preventDefault();
     if (!newVideoTitle.trim()) {
       toast({ title: "Missing title", description: "Please provide a video title.", variant: "destructive" });
+      return;
+    }
+    if (!driveLink.trim()) {
+      toast({ title: "No Drive link", description: "Please paste a Google Drive share link.", variant: "destructive" });
       return;
     }
     if (!q1Text.trim() || !q2Text.trim()) {
@@ -176,47 +163,14 @@ export default function Admin() {
       return;
     }
 
-    let finalUrl = "";
-
-    if (videoSource === "drive") {
-      if (!driveLink.trim()) {
-        toast({ title: "No Drive link", description: "Please paste a Google Drive share link.", variant: "destructive" });
-        return;
-      }
-      const fileId = parseDriveId(driveLink.trim());
-      if (!fileId) {
-        toast({ title: "Invalid Drive link", description: "Could not extract a file ID from that link. Make sure you copy the share link from Google Drive.", variant: "destructive" });
-        return;
-      }
-      finalUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-    } else {
-      if (!videoFile) {
-        toast({ title: "No video selected", description: "Please select a video file.", variant: "destructive" });
-        return;
-      }
-      setUploading(true);
-      setUploadProgress(10);
-
-      await supabase.storage.createBucket("videos", { public: true }).catch(() => {});
-
-      const ext = videoFile.name.split(".").pop() || "mp4";
-      const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error: uploadErr } = await supabase.storage
-        .from("videos")
-        .upload(fileName, videoFile, { cacheControl: "3600", upsert: false });
-
-      if (uploadErr) {
-        setUploading(false);
-        setUploadProgress(0);
-        toast({ title: "Upload Failed", description: uploadErr.message, variant: "destructive" });
-        return;
-      }
-      setUploadProgress(85);
-      const { data: urlData } = supabase.storage.from("videos").getPublicUrl(fileName);
-      finalUrl = urlData.publicUrl;
+    const fileId = parseDriveId(driveLink.trim());
+    if (!fileId) {
+      toast({ title: "Invalid Drive link", description: "Could not extract a file ID from that link. Make sure you copy the share link from Google Drive.", variant: "destructive" });
+      return;
     }
+    const finalUrl = `https://drive.google.com/file/d/${fileId}/preview`;
 
-    setUploadProgress(95);
+    setSaving(true);
 
     const questionsJson: QuestionItem[] = [
       { question_text: q1Text.trim(), order: 1 },
@@ -231,16 +185,14 @@ export default function Admin() {
       questions: questionsJson,
     }]);
 
-    setUploading(false);
-    setUploadProgress(0);
+    setSaving(false);
 
     if (insertErr) {
       toast({ title: "Database Error", description: insertErr.message, variant: "destructive" });
       return;
     }
 
-    setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setVideoFile(null); setDriveLink("");
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setDriveLink("");
     setShowAddVideo(false);
     toast({ title: "Video saved", description: `"${newVideoTitle.trim()}" added successfully.` });
     fetchAll();
@@ -248,17 +200,7 @@ export default function Admin() {
 
   async function deleteVideo(id: number) {
     if (!confirm("Delete this video and all its responses?")) return;
-    // Get the URL first so we can remove from storage too
-    const video = videos.find((v) => v.id === id);
     await supabase.from("videos").delete().eq("id", id);
-    if (video) {
-      // Extract the filename from the storage URL and delete it
-      try {
-        const url = new URL(video.url || "");
-        const parts = url.pathname.split("/videos/");
-        if (parts[1]) await supabase.storage.from("videos").remove([parts[1]]);
-      } catch {}
-    }
     toast({ title: "Video deleted" });
     fetchAll();
   }
@@ -392,7 +334,7 @@ export default function Admin() {
               <div className="bg-card border border-primary/30 rounded-xl p-5 shadow-lg glow-primary-sm">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-foreground text-sm">Add New Video</h3>
-                  <button type="button" onClick={() => { setShowAddVideo(false); setVideoFile(null); setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setDriveLink(""); }}
+                  <button type="button" onClick={() => { setShowAddVideo(false); setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setDriveLink(""); }}
                     className="text-muted-foreground hover:text-foreground">
                     <IconX />
                   </button>
@@ -408,62 +350,19 @@ export default function Admin() {
                     />
                   </div>
 
-                  {/* Video Source Toggle */}
+                  {/* Google Drive Link */}
                   <div>
-                    <label className="block text-sm font-semibold text-foreground mb-1.5">Video Source <span className="text-destructive">*</span></label>
-                    <div className="flex gap-2 mb-3">
-                      {(["drive", "upload"] as const).map((src) => (
-                        <button
-                          key={src} type="button" onClick={() => setVideoSource(src)}
-                          className={`flex-1 py-2 rounded-lg border text-sm font-semibold capitalize transition-all ${
-                            videoSource === src
-                              ? "bg-primary border-primary text-white glow-primary-sm"
-                              : "bg-background border-input text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                          }`}
-                        >
-                          {src === "drive" ? "📁 Google Drive" : "⬆ Upload File"}
-                        </button>
-                      ))}
-                    </div>
-
-                    {videoSource === "drive" ? (
-                      <div>
-                        <input
-                          value={driveLink} onChange={(e) => setDriveLink(e.target.value)}
-                          placeholder="Paste Google Drive share link here..."
-                          className="w-full px-3 py-2.5 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
-                        />
-                        <p className="text-xs text-muted-foreground/60 mt-1.5">
-                          In Google Drive: right-click the video → Share → Copy link. The file must be set to "Anyone with the link can view".
-                        </p>
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="flex items-center gap-3 flex-wrap">
-                          <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-primary/10 border border-primary/30 text-primary font-semibold text-sm rounded-lg hover:bg-primary/20 hover:border-primary/60 transition-all"
-                          >
-                            <IconFilm /> Choose File
-                          </button>
-                          {videoFile ? (
-                            <div className="flex items-center gap-2 flex-1 min-w-0">
-                              <span className="text-foreground text-sm font-medium truncate">{videoFile.name}</span>
-                              <span className="text-muted-foreground text-xs flex-shrink-0">{(videoFile.size / (1024 * 1024)).toFixed(1)} MB</span>
-                              <button type="button" onClick={() => { setVideoFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
-                                className="text-muted-foreground hover:text-destructive flex-shrink-0 transition-colors">
-                                <IconX />
-                              </button>
-                            </div>
-                          ) : (
-                            <span className="text-muted-foreground text-sm">No file selected</span>
-                          )}
-                          <input ref={fileInputRef} type="file" accept="video/*" className="hidden" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} />
-                        </div>
-                        <p className="text-xs text-muted-foreground/60 mt-1.5">Supports MP4, MOV, WebM</p>
-                      </div>
-                    )}
+                    <label className="block text-sm font-semibold text-foreground mb-1.5">
+                      Google Drive Link <span className="text-destructive">*</span>
+                    </label>
+                    <input
+                      value={driveLink} onChange={(e) => setDriveLink(e.target.value)}
+                      placeholder="Paste Google Drive share link here..."
+                      className="w-full px-3 py-2.5 bg-background border border-input rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all"
+                    />
+                    <p className="text-xs text-muted-foreground/60 mt-1.5">
+                      In Google Drive: right-click the video → Share → Copy link. The file must be set to "Anyone with the link can view".
+                    </p>
                   </div>
 
                   {/* Question 1 */}
@@ -492,26 +391,13 @@ export default function Admin() {
                     />
                   </div>
 
-                  {/* Upload progress */}
-                  {uploading && (
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{uploadProgress < 80 ? "Uploading to storage..." : "Saving to database..."}</span>
-                        <span>{uploadProgress}%</span>
-                      </div>
-                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full transition-all duration-300 glow-primary-sm" style={{ width: `${uploadProgress}%` }} />
-                      </div>
-                    </div>
-                  )}
-
                   <div className="flex gap-3">
-                    <button type="submit" disabled={uploading}
+                    <button type="submit" disabled={saving}
                       className="flex items-center gap-2 px-5 py-2 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
                     >
-                      {uploading ? <><IconLoader /> Processing...</> : <><IconUpload /> Save to Database</>}
+                      {saving ? <><IconLoader /> Saving...</> : <><IconCheck /> Save to Database</>}
                     </button>
-                    <button type="button" onClick={() => { setShowAddVideo(false); setVideoFile(null); setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); }}
+                    <button type="button" onClick={() => { setShowAddVideo(false); setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setDriveLink(""); }}
                       className="px-5 py-2 bg-muted text-muted-foreground font-semibold text-sm rounded-lg hover:bg-muted/80 transition-colors"
                     >
                       Cancel
@@ -549,7 +435,7 @@ export default function Admin() {
                             <p className="font-semibold text-foreground text-sm truncate">{video.title}</p>
                             <p className="text-xs text-muted-foreground flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
-                              Stored in database
+                              Google Drive
                             </p>
                           </div>
                         </div>
