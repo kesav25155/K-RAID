@@ -11,62 +11,83 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Package manager**: pnpm
 - **TypeScript version**: 5.9
 - **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
-- **API codegen**: Orval (from OpenAPI spec)
-- **Build**: esbuild (CJS bundle)
+- **Database**: Supabase (external)
 
 ## Artifacts
 
 ### K-RAID (`artifacts/k-raid`)
 - **Type**: React + Vite (frontend only, no backend)
 - **Preview path**: `/`
-- **Description**: Kabaddi player and coach registration website with dark theme
-- **Database**: Supabase (external) — table: `k_raid_submissions`
-- **Features**:
-  - Registration form: name, district, state, designation (player/coach)
-  - 5 videos each with 2 questions and large text-area answers
-  - Submits all data to Supabase
+- **Description**: Kabaddi player and coach registration website with dark theme + admin panel
+- **Database**: Supabase — 4 tables: videos, questions, submissions, responses
+- **Admin path**: `/admin` — password: `kraid@2025`
 
 ## Supabase Setup
 
-The K-RAID app uses Supabase. Run this SQL in the Supabase SQL editor to create the required table:
+Run this SQL in the Supabase SQL Editor to create all required tables:
 
 ```sql
-CREATE TABLE IF NOT EXISTS k_raid_submissions (
+-- Videos table
+CREATE TABLE IF NOT EXISTS videos (
+  id BIGSERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  url TEXT NOT NULL,
+  "order" INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Questions table (linked to videos)
+CREATE TABLE IF NOT EXISTS questions (
+  id BIGSERIAL PRIMARY KEY,
+  video_id BIGINT REFERENCES videos(id) ON DELETE CASCADE,
+  question_text TEXT NOT NULL,
+  "order" INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Submissions table (user details)
+CREATE TABLE IF NOT EXISTS submissions (
   id BIGSERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   district TEXT NOT NULL,
   state TEXT NOT NULL,
   designation TEXT NOT NULL CHECK (designation IN ('player', 'coach')),
-  v1_q1 TEXT,
-  v1_q2 TEXT,
-  v2_q1 TEXT,
-  v2_q2 TEXT,
-  v3_q1 TEXT,
-  v3_q2 TEXT,
-  v4_q1 TEXT,
-  v4_q2 TEXT,
-  v5_q1 TEXT,
-  v5_q2 TEXT,
   submitted_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-ALTER TABLE k_raid_submissions ENABLE ROW LEVEL SECURITY;
+-- Responses table (answers linked to submission + question)
+CREATE TABLE IF NOT EXISTS responses (
+  id BIGSERIAL PRIMARY KEY,
+  submission_id BIGINT REFERENCES submissions(id) ON DELETE CASCADE,
+  question_id BIGINT REFERENCES questions(id) ON DELETE CASCADE,
+  answer_text TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
-CREATE POLICY "Allow public insert" ON k_raid_submissions
-  FOR INSERT WITH CHECK (true);
+-- Enable Row Level Security
+ALTER TABLE videos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE questions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE responses ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Allow public select" ON k_raid_submissions
-  FOR SELECT USING (true);
+-- Public read for videos and questions
+CREATE POLICY "Public read videos" ON videos FOR SELECT USING (true);
+CREATE POLICY "Public read questions" ON questions FOR SELECT USING (true);
+
+-- Public insert for submissions and responses
+CREATE POLICY "Public insert submissions" ON submissions FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public read submissions" ON submissions FOR SELECT USING (true);
+CREATE POLICY "Public insert responses" ON responses FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public read responses" ON responses FOR SELECT USING (true);
+
+-- Admin insert for videos and questions (public for now)
+CREATE POLICY "Public insert videos" ON videos FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public delete videos" ON videos FOR DELETE USING (true);
+CREATE POLICY "Public insert questions" ON questions FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public delete questions" ON questions FOR DELETE USING (true);
 ```
 
 ## Key Commands
 
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- `pnpm --filter @workspace/api-server run dev` — run API server locally
-
-See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
