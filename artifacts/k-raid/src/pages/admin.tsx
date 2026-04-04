@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
 type QuestionItem = { question_text: string; order: number };
-type Video = { id: number; title: string; url: string; storage_path?: string; order: number; questions: QuestionItem[] };
+type Video = { id: number; title: string; order: number; questions: QuestionItem[] };
 type Submission = { id: number; name: string; district: string; state: string; designation: string; submitted_at: string };
 type Response = { id: number; submission_id: number; video_id: number; question_index: number; question_text: string; answer_text: string };
 
@@ -124,13 +124,15 @@ export default function Admin() {
 
   const [expandedSub, setExpandedSub] = useState<number | null>(null);
   const [expandedVideo, setExpandedVideo] = useState<number | null>(null);
+  const [previewSrcs, setPreviewSrcs] = useState<Record<number, string>>({});
+  const [loadingPreview, setLoadingPreview] = useState<Record<number, boolean>>({});
 
   useEffect(() => { if (authed) fetchAll(); }, [authed]);
 
   async function fetchAll() {
     setLoading(true);
     const [v, s, r] = await Promise.all([
-      supabase.from("videos").select("*").order("order"),
+      supabase.from("videos").select("id,title,order,questions").order("order"),
       supabase.from("submissions").select("*").order("submitted_at", { ascending: false }),
       supabase.from("responses").select("*"),
     ]);
@@ -138,6 +140,26 @@ export default function Admin() {
     setSubmissions(s.data || []);
     setResponses(r.data || []);
     setLoading(false);
+  }
+
+  async function loadPreview(videoId: number) {
+    if (previewSrcs[videoId] || loadingPreview[videoId]) return;
+    setLoadingPreview((prev) => ({ ...prev, [videoId]: true }));
+    const { data } = await supabase.from("videos").select("url").eq("id", videoId).single();
+    if (data?.url) setPreviewSrcs((prev) => ({ ...prev, [videoId]: data.url }));
+    setLoadingPreview((prev) => ({ ...prev, [videoId]: false }));
+  }
+
+  function readFileAsBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.onprogress = (e) => {
+        if (e.lengthComputable) setUploadProgress(Math.round((e.loaded / e.total) * 80));
+      };
+      reader.readAsDataURL(file);
+    });
   }
 
   async function addVideo(e: React.FormEvent) {
@@ -155,26 +177,18 @@ export default function Admin() {
       return;
     }
     setUploading(true);
-    setUploadProgress(10);
+    setUploadProgress(5);
 
-    const ext = videoFile.name.split(".").pop() || "mp4";
-    const filePath = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-
-    const { error: uploadErr } = await supabase.storage
-      .from("videos")
-      .upload(filePath, videoFile, { cacheControl: "3600", upsert: false });
-
-    if (uploadErr) {
+    let dataUrl: string;
+    try {
+      dataUrl = await readFileAsBase64(videoFile);
+    } catch {
       setUploading(false);
       setUploadProgress(0);
-      toast({ title: "Upload Failed", description: uploadErr.message, variant: "destructive" });
+      toast({ title: "Read Failed", description: "Could not read the video file.", variant: "destructive" });
       return;
     }
-
     setUploadProgress(85);
-
-    const { data: urlData } = supabase.storage.from("videos").getPublicUrl(filePath);
-    const publicUrl = urlData.publicUrl;
 
     const questionsJson: QuestionItem[] = [
       { question_text: q1Text.trim(), order: 1 },
@@ -184,8 +198,7 @@ export default function Admin() {
     const maxOrder = videos.reduce((m, v) => Math.max(m, v.order), 0);
     const { error: insertErr } = await supabase.from("videos").insert([{
       title: newVideoTitle.trim(),
-      url: publicUrl,
-      storage_path: filePath,
+      url: dataUrl,
       order: maxOrder + 1,
       questions: questionsJson,
     }]);
@@ -194,7 +207,6 @@ export default function Admin() {
     setUploadProgress(0);
 
     if (insertErr) {
-      await supabase.storage.from("videos").remove([filePath]);
       toast({ title: "Database Error", description: insertErr.message, variant: "destructive" });
       return;
     }
@@ -202,15 +214,12 @@ export default function Admin() {
     setNewVideoTitle(""); setQ1Text(""); setQ2Text(""); setVideoFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
     setShowAddVideo(false);
-    toast({ title: "Video uploaded successfully", description: `"${newVideoTitle.trim()}" is ready for participants.` });
+    toast({ title: "Video saved", description: `"${newVideoTitle.trim()}" with 2 questions stored in database.` });
     fetchAll();
   }
 
-  async function deleteVideo(id: number, storagePath?: string) {
+  async function deleteVideo(id: number) {
     if (!confirm("Delete this video and all its responses?")) return;
-    if (storagePath) {
-      await supabase.storage.from("videos").remove([storagePath]);
-    }
     await supabase.from("videos").delete().eq("id", id);
     toast({ title: "Video deleted" });
     fetchAll();
@@ -423,7 +432,7 @@ export default function Admin() {
                   {uploading && (
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{uploadProgress < 85 ? "Uploading to storage..." : "Saving to database..."}</span>
+                        <span>{uploadProgress < 85 ? "Encoding video..." : "Saving to database..."}</span>
                         <span>{uploadProgress}%</span>
                       </div>
                       <div className="h-1.5 bg-muted rounded-full overflow-hidden">
@@ -485,7 +494,7 @@ export default function Admin() {
                             {video.questions?.length || 0} questions
                           </span>
                           <button
-                            onClick={(e) => { e.stopPropagation(); deleteVideo(video.id, video.storage_path); }}
+                            onClick={(e) => { e.stopPropagation(); deleteVideo(video.id); }}
                             className="text-muted-foreground hover:text-destructive transition-colors p-1.5 rounded-lg hover:bg-destructive/10"
                           >
                             <IconTrash />
@@ -499,8 +508,23 @@ export default function Admin() {
                       {isExp && (
                         <div className="border-t border-border/60 p-5 space-y-4 bg-background/30">
                           {/* Video preview */}
-                          <div className="rounded-xl overflow-hidden border border-border/60 bg-black aspect-video max-h-48">
-                            <video src={video.url} controls className="w-full h-full object-contain" preload="metadata" />
+                          <div className="rounded-xl overflow-hidden border border-border/60 bg-black aspect-video max-h-48 relative">
+                            {previewSrcs[video.id] ? (
+                              <video src={previewSrcs[video.id]} controls autoPlay className="w-full h-full object-contain" />
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => loadPreview(video.id)}
+                                disabled={loadingPreview[video.id]}
+                                className="absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-colors"
+                              >
+                                {loadingPreview[video.id] ? (
+                                  <><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /><span className="text-muted-foreground text-xs">Loading...</span></>
+                                ) : (
+                                  <><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-primary"><polygon points="5 3 19 12 5 21 5 3"/></svg><span className="text-muted-foreground text-xs">Preview video</span></>
+                                )}
+                              </button>
+                            )}
                           </div>
 
                           {/* Questions */}

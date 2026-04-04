@@ -13,7 +13,7 @@ const INDIAN_STATES = [
 ];
 
 type QuestionItem = { question_text: string; order: number };
-type Video = { id: number; title: string; url: string; order: number; questions: QuestionItem[] };
+type Video = { id: number; title: string; order: number; questions: QuestionItem[] };
 
 function IconUser() {
   return (
@@ -71,17 +71,38 @@ export default function Home() {
   const [district, setDistrict] = useState("");
   const [state, setState] = useState("");
   const [designation, setDesignation] = useState<"player" | "coach" | "">("");
-  const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [videoSrcs, setVideoSrcs] = useState<Record<number, string>>({});
+  const [loadingVideo, setLoadingVideo] = useState<Record<number, boolean>>({});
 
   useEffect(() => { fetchVideos(); }, []);
 
   async function fetchVideos() {
     setLoading(true);
-    const { data: vids } = await supabase.from("videos").select("*").order("order", { ascending: true });
+    const { data: vids } = await supabase
+      .from("videos")
+      .select("id,title,order,questions")
+      .order("order", { ascending: true });
     setVideos((vids || []).map((v) => ({ ...v, questions: Array.isArray(v.questions) ? v.questions : [] })));
     setLoading(false);
+  }
+
+  async function loadVideoSrc(videoId: number) {
+    if (videoSrcs[videoId] || loadingVideo[videoId]) return;
+    setLoadingVideo((prev) => ({ ...prev, [videoId]: true }));
+    const { data, error } = await supabase
+      .from("videos")
+      .select("url")
+      .eq("id", videoId)
+      .single();
+    if (error || !data?.url) {
+      toast({ title: "Failed to load video", description: "Could not retrieve video data.", variant: "destructive" });
+    } else {
+      setVideoSrcs((prev) => ({ ...prev, [videoId]: data.url }));
+    }
+    setLoadingVideo((prev) => ({ ...prev, [videoId]: false }));
   }
 
   function answerKey(videoId: number, qIndex: number) {
@@ -294,10 +315,35 @@ export default function Home() {
               </div>
               <div className="p-6 space-y-6">
                 {/* Video Player */}
-                <div className="rounded-xl overflow-hidden border border-border/60 bg-black aspect-video shadow-lg">
-                  <video controls className="w-full h-full" src={video.url} preload="metadata">
-                    Your browser does not support the video tag.
-                  </video>
+                <div className="rounded-xl overflow-hidden border border-border/60 bg-black aspect-video shadow-lg relative">
+                  {videoSrcs[video.id] ? (
+                    <video controls autoPlay className="w-full h-full" src={videoSrcs[video.id]}>
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => loadVideoSrc(video.id)}
+                      disabled={loadingVideo[video.id]}
+                      className="absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-3 bg-black/80 hover:bg-black/70 transition-colors group"
+                    >
+                      {loadingVideo[video.id] ? (
+                        <>
+                          <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin glow-primary-sm" />
+                          <span className="text-muted-foreground text-sm">Loading video...</span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-16 h-16 rounded-full bg-primary/20 border-2 border-primary/50 flex items-center justify-center group-hover:bg-primary/30 group-hover:border-primary transition-all glow-primary-sm">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" className="text-primary ml-1">
+                              <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                          </div>
+                          <span className="text-muted-foreground text-sm group-hover:text-foreground transition-colors">Click to load &amp; play video</span>
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
                 {/* Questions */}
                 <div className="space-y-5">
