@@ -12,8 +12,8 @@ const INDIAN_STATES = [
   "Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry",
 ];
 
-type Question = { id: number; question_text: string; order: number };
-type Video = { id: number; title: string; url: string; order: number; questions: Question[] };
+type QuestionItem = { question_text: string; order: number };
+type Video = { id: number; title: string; url: string; order: number; questions: QuestionItem[] };
 
 function IconUser() {
   return (
@@ -80,13 +80,16 @@ export default function Home() {
   async function fetchVideos() {
     setLoading(true);
     const { data: vids } = await supabase.from("videos").select("*").order("order", { ascending: true });
-    const { data: qs } = await supabase.from("questions").select("*").order("order", { ascending: true });
-    setVideos((vids || []).map((v) => ({ ...v, questions: (qs || []).filter((q) => q.video_id === v.id) })));
+    setVideos((vids || []).map((v) => ({ ...v, questions: Array.isArray(v.questions) ? v.questions : [] })));
     setLoading(false);
   }
 
-  function setAnswer(questionId: number, value: string) {
-    setAnswers((prev) => ({ ...prev, [questionId]: value }));
+  function answerKey(videoId: number, qIndex: number) {
+    return `${videoId}_${qIndex}`;
+  }
+
+  function setAnswer(videoId: number, qIndex: number, value: string) {
+    setAnswers((prev) => ({ ...prev, [answerKey(videoId, qIndex)]: value }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -96,8 +99,8 @@ export default function Home() {
       return;
     }
     for (const video of videos) {
-      for (const q of video.questions) {
-        if (!answers[q.id]?.trim()) {
+      for (let qi = 0; qi < video.questions.length; qi++) {
+        if (!answers[answerKey(video.id, qi)]?.trim()) {
           toast({ title: "Incomplete Answers", description: `Please answer all questions for "${video.title}".`, variant: "destructive" });
           return;
         }
@@ -112,7 +115,13 @@ export default function Home() {
       return;
     }
     const responseRows = videos.flatMap((v) =>
-      v.questions.map((q) => ({ submission_id: submission.id, question_id: q.id, answer_text: answers[q.id] || "" }))
+      v.questions.map((q, qi) => ({
+        submission_id: submission.id,
+        video_id: v.id,
+        question_index: qi,
+        question_text: q.question_text,
+        answer_text: answers[answerKey(v.id, qi)] || "",
+      }))
     );
     const { error: respErr } = await supabase.from("responses").insert(responseRows);
     setSubmitting(false);
@@ -293,22 +302,22 @@ export default function Home() {
                 {/* Questions */}
                 <div className="space-y-5">
                   {video.questions.map((q, qi) => (
-                    <div key={q.id} className="space-y-2">
+                    <div key={qi} className="space-y-2">
                       <label className="flex items-start gap-2 text-sm font-semibold text-foreground">
                         <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded bg-primary/20 border border-primary/30 text-primary text-[10px] font-bold flex items-center justify-center">Q{qi + 1}</span>
                         <span>{q.question_text} <span className="text-destructive">*</span></span>
                       </label>
                       <textarea
                         required rows={6}
-                        value={answers[q.id] || ""}
-                        onChange={(e) => setAnswer(q.id, e.target.value)}
-                        placeholder="Provide a detailed, thoughtful answer..."
+                        value={answers[answerKey(video.id, qi)] || ""}
+                        onChange={(e) => setAnswer(video.id, qi, e.target.value)}
+                        placeholder="Provide a detailed, thoughtful answer based on your expertise..."
                         className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all resize-y min-h-[140px] text-sm leading-relaxed"
                       />
                     </div>
                   ))}
                   {video.questions.length === 0 && (
-                    <p className="text-muted-foreground text-sm italic text-center py-4">No questions added for this video.</p>
+                    <p className="text-muted-foreground text-sm italic text-center py-4">No questions configured for this video.</p>
                   )}
                 </div>
               </div>
