@@ -324,28 +324,32 @@ export default function Admin() {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-foreground mb-1.5">Video File <span className="text-destructive">*</span></label>
-                    <div
-                      className="border-2 border-dashed border-border/80 rounded-xl p-6 text-center cursor-pointer hover:border-primary/50 transition-colors bg-background/50"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-primary/10 border border-primary/30 text-primary font-semibold text-sm rounded-lg hover:bg-primary/20 hover:border-primary/60 transition-all glow-primary-sm"
+                      >
+                        <IconFilm />
+                        Summon Video
+                      </button>
                       {videoFile ? (
-                        <div className="space-y-1">
-                          <div className="text-primary flex justify-center"><IconFilm /></div>
-                          <p className="text-foreground font-semibold text-sm truncate">{videoFile.name}</p>
-                          <p className="text-muted-foreground text-xs">{(videoFile.size / (1024 * 1024)).toFixed(1)} MB</p>
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <span className="text-foreground text-sm font-medium truncate">{videoFile.name}</span>
+                          <span className="text-muted-foreground text-xs flex-shrink-0">{(videoFile.size / (1024 * 1024)).toFixed(1)} MB</span>
+                          <button type="button" onClick={() => { setVideoFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }} className="text-muted-foreground hover:text-destructive flex-shrink-0 transition-colors">
+                            <IconX />
+                          </button>
                         </div>
                       ) : (
-                        <div className="space-y-2">
-                          <div className="text-muted-foreground flex justify-center"><IconUpload /></div>
-                          <p className="text-sm text-muted-foreground">Click to select a video file</p>
-                          <p className="text-xs text-muted-foreground/60">MP4, MOV, WebM supported</p>
-                        </div>
+                        <span className="text-muted-foreground text-sm">No file selected</span>
                       )}
                       <input
                         ref={fileInputRef} type="file" accept="video/*" className="hidden"
                         onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
                       />
                     </div>
+                    <p className="text-xs text-muted-foreground/60 mt-1.5">Supports MP4, MOV, WebM</p>
                   </div>
 
                   {uploading && (

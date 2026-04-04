@@ -134,9 +134,9 @@ export default function Home() {
           <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center mx-auto mb-6 glow-primary-sm text-primary">
             <IconCheck />
           </div>
-          <h2 className="text-3xl font-black text-foreground mb-3">Submitted Successfully</h2>
-          <p className="text-muted-foreground text-base mb-1">Your response has been recorded.</p>
-          <p className="text-muted-foreground text-sm">Thank you for participating in K-RAID.</p>
+          <h2 className="text-3xl font-black text-foreground mb-3">Response Recorded</h2>
+          <p className="text-muted-foreground text-base mb-1">Your data has been captured successfully.</p>
+          <p className="text-muted-foreground text-sm">Thank you for contributing to the K-RAID research study.</p>
           <button onClick={resetForm} className="mt-8 px-8 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition-colors glow-primary-sm">
             Submit Another Response
           </button>
@@ -157,12 +157,12 @@ export default function Home() {
             <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center font-black text-white text-base glow-primary-sm">K</div>
             <div>
               <span className="text-lg font-black tracking-widest text-white">K-RAID</span>
-              <span className="ml-2 text-xs text-muted-foreground hidden sm:inline">Kabaddi Registration Portal</span>
+              <span className="ml-2 text-xs text-muted-foreground hidden sm:inline">Kabaddi Research Study</span>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
-            <span>Registration Open</span>
+            <span>Data Collection Active</span>
           </div>
         </div>
       </header>
@@ -170,14 +170,14 @@ export default function Home() {
       <form onSubmit={handleSubmit} className="max-w-5xl mx-auto px-4 py-12 space-y-8 relative">
         {/* Hero */}
         <div className="text-center py-8">
-          <p className="text-xs font-semibold tracking-[0.3em] text-primary uppercase mb-4">Kabaddi Player & Coach Registry</p>
+          <p className="text-xs font-semibold tracking-[0.3em] text-primary uppercase mb-4">Final Year Research Project &mdash; Data Collection</p>
           <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4">
-            <span className="text-white">Register Your </span>
+            <span className="text-white">Participate in the </span>
             <span className="gradient-text">K-RAID</span>
-            <span className="text-white"> Profile</span>
+            <span className="text-white"> Study</span>
           </h1>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
-            Watch all videos carefully, provide detailed answers to each question, and submit your registration.
+            Watch each kabaddi video carefully, respond to the research questions based on your expertise, and submit your data to support our study.
           </p>
         </div>
 
@@ -207,7 +207,7 @@ export default function Home() {
             </div>
             <div>
               <h3 className="font-bold text-foreground">Personal Details</h3>
-              <p className="text-xs text-muted-foreground">Your identity information</p>
+              <p className="text-xs text-muted-foreground">Participant information for this research</p>
             </div>
           </div>
           <div className="p-6">
@@ -323,10 +323,10 @@ export default function Home() {
               type="submit" disabled={submitting}
               className="w-full py-4 bg-primary text-white font-bold text-base rounded-xl hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg glow-primary flex items-center justify-center gap-3"
             >
-              {submitting ? <><IconLoader /> Submitting...</> : "Submit Registration"}
+              {submitting ? <><IconLoader /> Submitting...</> : "Submit Research Data"}
             </button>
             <p className="text-center text-muted-foreground text-xs mt-4">
-              All fields are required. Ensure all video questions are answered before submitting.
+              All fields are required. Ensure all questions are answered before submitting your data.
             </p>
           </div>
         )}
@@ -334,7 +334,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-border/40 py-6">
-        <p className="text-center text-xs text-muted-foreground">K-RAID &mdash; Kabaddi Player & Coach Registration Portal</p>
+        <p className="text-center text-xs text-muted-foreground">K-RAID &mdash; Kabaddi Research & Analytics in India &bull; Final Year Project Data Collection</p>
       </footer>
     </div>
   );
