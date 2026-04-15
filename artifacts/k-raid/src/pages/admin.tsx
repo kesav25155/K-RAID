@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 
 type QuestionItem = { question_text: string; order: number };
 type Video = { id: number; title: string; order: number; questions: QuestionItem[]; url?: string };
-type Submission = { id: number; name: string; district: string; state: string; designation: string; submitted_at: string };
+type Submission = { id: number; name: string; designation: string; submitted_at: string };
 type Response = { id: number; submission_id: number; video_id: number; question_index: number; question_text: string; answer_text: string };
 
 const ADMIN_PASSWORD = "kraid@2025";
@@ -230,16 +230,16 @@ export default function Admin() {
 
   function exportCSV() {
     const rows: string[][] = [];
-    rows.push(["Submission ID", "Name", "District", "State", "Designation", "Submitted At", "Video", "Q#", "Question", "Answer"]);
+    rows.push(["Submission ID", "Name", "Designation", "Submitted At", "Video", "Q#", "Question", "Answer"]);
     for (const sub of submissions) {
       const subResponses = responses.filter((r) => r.submission_id === sub.id);
       if (subResponses.length === 0) {
-        rows.push([String(sub.id), sub.name, sub.district, sub.state, sub.designation, sub.submitted_at, "", "", "", ""]);
+        rows.push([String(sub.id), sub.name, sub.designation, sub.submitted_at, "", "", "", ""]);
       } else {
         for (const resp of subResponses) {
           const video = videos.find((v) => v.id === resp.video_id);
           rows.push([
-            String(sub.id), sub.name, sub.district, sub.state, sub.designation, sub.submitted_at,
+            String(sub.id), sub.name, sub.designation, sub.submitted_at,
             video?.title || "", String(resp.question_index + 1), resp.question_text || "", resp.answer_text,
           ]);
         }
@@ -579,7 +579,7 @@ export default function Admin() {
                           </div>
                           <div className="min-w-0">
                             <p className="font-semibold text-foreground">{sub.name}</p>
-                            <p className="text-xs text-muted-foreground">{sub.district}, {sub.state}</p>
+                            <p className="text-xs text-muted-foreground capitalize">{sub.designation}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3 flex-shrink-0 ml-3">
@@ -604,8 +604,8 @@ export default function Admin() {
 
                       {isOpen && (
                         <div className="border-t border-border/60 p-5 space-y-5 bg-background/30">
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {[["Name", sub.name], ["District", sub.district], ["State", sub.state], ["Designation", sub.designation]].map(([label, value]) => (
+                          <div className="grid grid-cols-2 gap-3">
+                            {[["Name", sub.name], ["Designation", sub.designation]].map(([label, value]) => (
                               <div key={label} className="bg-card border border-border/60 rounded-lg p-3">
                                 <p className="text-xs text-muted-foreground mb-1">{label}</p>
                                 <p className="text-foreground font-semibold text-sm capitalize">{value}</p>
