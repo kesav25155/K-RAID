@@ -2,19 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
-const INDIAN_STATES = [
-  "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh",
-  "Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka",
-  "Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram",
-  "Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu",
-  "Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal",
-  "Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli",
-  "Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry",
-];
-
 type QuestionItem = { question_text: string; order: number };
 type Video = { id: number; title: string; order: number; questions: QuestionItem[]; url?: string };
-type Step = "welcome" | "details" | "video" | "thankyou";
+type Step = "welcome" | "video" | "details" | "thankyou";
 
 function IconLoader() {
   return (
@@ -50,11 +40,11 @@ function IconCheck() {
 
 /* ── Progress bar at top ── */
 function ProgressBar({ step, videoIndex, totalVideos }: { step: Step; videoIndex: number; totalVideos: number }) {
-  const totalSteps = 2 + totalVideos; // details + videos
+  const totalSteps = totalVideos + 1; // videos + details
   let filled = 0;
   if (step === "welcome") filled = 0;
-  else if (step === "details") filled = 1;
-  else if (step === "video") filled = 2 + videoIndex;
+  else if (step === "video") filled = videoIndex + 1;
+  else if (step === "details") filled = totalVideos;
   else if (step === "thankyou") filled = totalSteps;
 
   const pct = totalSteps > 0 ? Math.round((filled / totalSteps) * 100) : 0;
@@ -79,11 +69,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   const [name, setName] = useState("");
-  const [district, setDistrict] = useState("");
-  const [state, setState] = useState("");
   const [designation, setDesignation] = useState<"player" | "coach" | "">("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
-
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -112,16 +99,7 @@ export default function Home() {
   }
 
   /* ── Navigation ── */
-  function goToDetails() {
-    setStep("details");
-    scrollTop();
-  }
-
-  function goToVideos() {
-    if (!name.trim() || !district.trim() || !state || !designation) {
-      toast({ title: "Missing Information", description: "Please fill in all personal details.", variant: "destructive" });
-      return;
-    }
+  function startStudy() {
     setVideoIndex(0);
     setStep("video");
     scrollTop();
@@ -139,7 +117,8 @@ export default function Home() {
       setVideoIndex((i) => i + 1);
       scrollTop();
     } else {
-      handleSubmit();
+      setStep("details");
+      scrollTop();
     }
   }
 
@@ -148,16 +127,27 @@ export default function Home() {
       setVideoIndex((i) => i - 1);
       scrollTop();
     } else {
-      setStep("details");
+      setStep("welcome");
       scrollTop();
     }
   }
 
+  function goBackFromDetails() {
+    setVideoIndex(videos.length - 1);
+    setStep("video");
+    scrollTop();
+  }
+
   async function handleSubmit() {
+    if (!name.trim() || !designation) {
+      toast({ title: "Missing Information", description: "Please fill in your name and designation.", variant: "destructive" });
+      return;
+    }
+
     setSubmitting(true);
     const { data: submission, error: subErr } = await supabase
       .from("submissions")
-      .insert([{ name: name.trim(), district: district.trim(), state, designation }])
+      .insert([{ name: name.trim(), district: "", state: "", designation }])
       .select()
       .single();
 
@@ -189,7 +179,7 @@ export default function Home() {
   function resetForm() {
     setStep("welcome");
     setVideoIndex(0);
-    setName(""); setDistrict(""); setState(""); setDesignation("");
+    setName(""); setDesignation("");
     setAnswers({});
     scrollTop();
   }
@@ -212,10 +202,14 @@ export default function Home() {
               <span className="text-xs text-muted-foreground hidden sm:inline tracking-wide">Kabaddi Research Study</span>
             </div>
           </div>
-          {step !== "welcome" && step !== "thankyou" && (
+          {step === "video" && (
             <div className="text-xs text-muted-foreground font-medium">
-              {step === "details" && "Step 1 of " + (videos.length + 1)}
-              {step === "video" && `Step ${videoIndex + 2} of ${videos.length + 1}`}
+              Video {videoIndex + 1} of {videos.length}
+            </div>
+          )}
+          {step === "details" && (
+            <div className="text-xs text-muted-foreground font-medium">
+              Final Step
             </div>
           )}
           {(step === "welcome" || step === "thankyou") && (
@@ -250,87 +244,13 @@ export default function Home() {
               You will watch {loading ? "a series of" : videos.length} kabaddi videos and answer research questions based on your expertise. The process takes about 10–15 minutes.
             </p>
             <button
-              onClick={goToDetails}
-              className="flex items-center gap-3 px-10 py-4 bg-primary text-white font-bold text-lg rounded-2xl hover:bg-primary/90 transition-all shadow-xl glow-primary"
+              onClick={startStudy}
+              disabled={loading}
+              className="flex items-center gap-3 px-10 py-4 bg-primary text-white font-bold text-lg rounded-2xl hover:bg-primary/90 transition-all shadow-xl glow-primary disabled:opacity-50"
             >
-              Begin Study <IconArrowRight />
+              {loading ? <><IconLoader /> Loading...</> : <>Begin Study <IconArrowRight /></>}
             </button>
             <p className="text-muted-foreground text-xs mt-6">All responses are confidential and used only for academic research.</p>
-          </div>
-        )}
-
-        {/* ══ DETAILS ══ */}
-        {step === "details" && (
-          <div className="space-y-8">
-            <div className="text-center">
-              <p className="text-xs font-semibold tracking-[0.2em] text-primary uppercase mb-3">Step 1 &mdash; Participant Information</p>
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2">Your Details</h2>
-              <p className="text-muted-foreground">Please provide your information to begin the study.</p>
-            </div>
-
-            <div className="bg-card border border-card-border rounded-2xl p-6 shadow-lg space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">Full Name <span className="text-destructive">*</span></label>
-                  <input
-                    type="text" value={name} onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your full name"
-                    className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">District <span className="text-destructive">*</span></label>
-                  <input
-                    type="text" value={district} onChange={(e) => setDistrict(e.target.value)}
-                    placeholder="Enter your district"
-                    className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">State <span className="text-destructive">*</span></label>
-                  <select
-                    value={state} onChange={(e) => setState(e.target.value)}
-                    className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
-                  >
-                    <option value="" disabled>Select your state</option>
-                    {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">Designation <span className="text-destructive">*</span></label>
-                  <div className="flex gap-3 h-[50px]">
-                    {(["player", "coach"] as const).map((d) => (
-                      <button
-                        key={d} type="button" onClick={() => setDesignation(d)}
-                        className={`flex-1 rounded-xl border font-semibold text-sm capitalize transition-all ${
-                          designation === d
-                            ? "bg-primary border-primary text-white shadow-lg glow-primary-sm"
-                            : "bg-background border-input text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                        }`}
-                      >{d}</button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => { setStep("welcome"); scrollTop(); }}
-                className="flex items-center gap-2 px-6 py-3 bg-muted text-muted-foreground font-semibold rounded-xl hover:bg-muted/80 hover:text-foreground transition-all"
-              >
-                <IconArrowLeft /> Back
-              </button>
-              <button
-                type="button"
-                onClick={goToVideos}
-                disabled={loading}
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-all shadow-lg glow-primary-sm"
-              >
-                {loading ? <><IconLoader /> Loading videos...</> : <>Continue <IconArrowRight /></>}
-              </button>
-            </div>
           </div>
         )}
 
@@ -422,16 +342,9 @@ export default function Home() {
               <button
                 type="button"
                 onClick={goNextVideo}
-                disabled={submitting}
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-all shadow-lg glow-primary-sm"
+                className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all shadow-lg glow-primary-sm"
               >
-                {submitting ? (
-                  <><IconLoader /> Submitting...</>
-                ) : isLastVideo ? (
-                  <>Submit Research Data <IconArrowRight /></>
-                ) : (
-                  <>Next Video <IconArrowRight /></>
-                )}
+                {isLastVideo ? <>Your Details <IconArrowRight /></> : <>Next Video <IconArrowRight /></>}
               </button>
             </div>
           </div>
@@ -447,6 +360,61 @@ export default function Home() {
             </div>
             <p className="text-foreground font-semibold">No videos available yet</p>
             <p className="text-muted-foreground text-sm mt-1">Please check back later.</p>
+          </div>
+        )}
+
+        {/* ══ DETAILS ══ */}
+        {step === "details" && (
+          <div className="space-y-8">
+            <div className="text-center">
+              <p className="text-xs font-semibold tracking-[0.2em] text-primary uppercase mb-3">Final Step &mdash; Participant Information</p>
+              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-2">Your Details</h2>
+              <p className="text-muted-foreground">Almost done! Just tell us a little about yourself.</p>
+            </div>
+
+            <div className="bg-card border border-card-border rounded-2xl p-6 shadow-lg space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-2">Full Name <span className="text-destructive">*</span></label>
+                <input
+                  type="text" value={name} onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your full name"
+                  className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-2">Designation <span className="text-destructive">*</span></label>
+                <div className="flex gap-3 h-[50px]">
+                  {(["player", "coach"] as const).map((d) => (
+                    <button
+                      key={d} type="button" onClick={() => setDesignation(d)}
+                      className={`flex-1 rounded-xl border font-semibold text-sm capitalize transition-all ${
+                        designation === d
+                          ? "bg-primary border-primary text-white shadow-lg glow-primary-sm"
+                          : "bg-background border-input text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                      }`}
+                    >{d}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pb-8">
+              <button
+                type="button"
+                onClick={goBackFromDetails}
+                className="flex items-center gap-2 px-6 py-3 bg-muted text-muted-foreground font-semibold rounded-xl hover:bg-muted/80 hover:text-foreground transition-all"
+              >
+                <IconArrowLeft /> Back
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-all shadow-lg glow-primary-sm"
+              >
+                {submitting ? <><IconLoader /> Submitting...</> : <>Submit Research Data <IconArrowRight /></>}
+              </button>
+            </div>
           </div>
         )}
 
