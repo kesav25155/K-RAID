@@ -147,7 +147,7 @@ export default function Home() {
     setSubmitting(true);
     const { data: submission, error: subErr } = await supabase
       .from("submissions")
-      .insert([{ name: name.trim(), district: "", state: "", designation }])
+      .insert([{ name: name.trim(), designation }])
       .select()
       .single();
 
