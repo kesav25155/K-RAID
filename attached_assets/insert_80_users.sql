@@ -1,4 +1,4 @@
--- Insert 80 additional users with 10 responses each (5 videos x 2 questions)
+-- Insert 80 additional users (Tamil Nadu names) with 10 responses each
   -- Total: 80 submissions + 800 responses
   -- Run this in Supabase SQL Editor
 
@@ -7,8 +7,8 @@
     sub_id BIGINT;
   BEGIN
   
-  -- User 1: Arun Kumar (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Arun Kumar', 'coach', '2026-04-05 08:00:00+00') RETURNING id INTO sub_id;
+  -- User 1: Karthik Subramanian (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Karthik Subramanian', 'coach', '2026-04-05 08:00:00+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The left in defender did not back up his corner partner during the chain tackle attempt.', '2026-04-05 08:00:00+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have used the lobby rule to their advantage by pushing the raider into the side line area.', '2026-04-05 08:00:00+00'),
@@ -21,8 +21,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, between 0:09 and 0:11 seconds the cover defender was off balance; perfect touch window.', '2026-04-05 08:00:00+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A coordinated dash at 0:11 seconds when raider was crossing back would have been ideal.', '2026-04-05 08:00:00+00');
 
-  -- User 2: Vignesh R (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Vignesh R', 'player', '2026-04-06 09:07:13+00') RETURNING id INTO sub_id;
+  -- User 2: Vignesh Ramamurthy (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Vignesh Ramamurthy', 'player', '2026-04-06 09:07:13+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders were not watching the raider''s foot movement; they reacted only after the touch was made.', '2026-04-06 09:07:13+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'All four defenders should have closed in together since it was a do or die raid.', '2026-04-06 09:07:13+00'),
@@ -35,8 +35,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, raider should have attempted touch around 0:09 seconds when the right cover was isolated and out of position.', '2026-04-06 09:07:13+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, ankle hold at 0:10 seconds when raider extended his foot would have made it a super tackle.', '2026-04-06 09:07:13+00');
 
-  -- User 3: Karthik Balaji (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Karthik Balaji', 'player', '2026-04-07 10:14:26+00') RETURNING id INTO sub_id;
+  -- User 3: Saravanan Murugesan (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Saravanan Murugesan', 'player', '2026-04-07 10:14:26+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders stood flat-footed and did not attempt ankle hold when the raider was within reach.', '2026-04-07 10:14:26+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have attempted a thigh hold combined with a back hold to stop the raider''s return.', '2026-04-07 10:14:26+00'),
@@ -49,8 +49,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was risky; raider should have stayed back and tried only at 0:14 seconds during the return.', '2026-04-07 10:14:26+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Ankle hold by left corner at 0:09 seconds was the prime moment; he hesitated and lost the chance.', '2026-04-07 10:14:26+00');
 
-  -- User 4: Suresh Babu (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Suresh Babu', 'player', '2026-04-08 11:21:39+00') RETURNING id INTO sub_id;
+  -- User 4: Dinesh Kumar S (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Dinesh Kumar S', 'player', '2026-04-08 11:21:39+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Right cover defender lost balance during the dash attempt and that gave the raider an easy return.', '2026-04-08 11:21:39+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Cover should have anticipated the dubki and dropped low to catch the raider''s waist.', '2026-04-08 11:21:39+00'),
@@ -63,8 +63,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch attempt was right at 0:09 seconds using a toe touch on the left cover defender.', '2026-04-08 11:21:39+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'The right cover should have attempted back hold at 0:12 seconds; that was the perfect moment.', '2026-04-08 11:21:39+00');
 
-  -- User 5: Naveen Krishna (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Naveen Krishna', 'player', '2026-04-09 12:28:52+00') RETURNING id INTO sub_id;
+  -- User 5: Prabhakaran M (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Prabhakaran M', 'player', '2026-04-09 12:28:52+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defense was not in proper formation. The right corner was standing too deep allowing the raider easy lobby access.', '2026-04-09 12:28:52+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The cover should have come up to support the corner with an ankle hold the moment the raider touched.', '2026-04-09 12:28:52+00'),
@@ -77,8 +77,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'He should have first secured bonus at 0:07 seconds and then attempted touch at 0:13 seconds.', '2026-04-09 12:28:52+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have set a trap and dashed at 0:13 seconds when raider was tired and returning.', '2026-04-09 12:28:52+00');
 
-  -- User 6: Mohan Raj (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Mohan Raj', 'player', '2026-04-10 13:35:05+00') RETURNING id INTO sub_id;
+  -- User 6: Senthil Velan (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Senthil Velan', 'player', '2026-04-10 13:35:05+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The all-out pressure was on but the defense panicked and attempted single tackles instead of chain formation.', '2026-04-10 13:35:05+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have set a block formation near the baulk line to cut off the raider''s escape route.', '2026-04-10 13:35:05+00'),
@@ -91,8 +91,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'He should have waited for defenders to advance and then attempted a turning kick at 0:13 seconds.', '2026-04-10 13:35:05+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A super tackle attempt was needed at 0:11 seconds since defense had only 4 players on mat.', '2026-04-10 13:35:05+00');
 
-  -- User 7: Selvam P (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Selvam P', 'player', '2026-04-11 14:42:18+00') RETURNING id INTO sub_id;
+  -- User 7: Murugan Pandian (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Murugan Pandian', 'player', '2026-04-11 14:42:18+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Cover defender released his hold prematurely, the raider used that gap to make a touch and return safely.', '2026-04-11 14:42:18+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have formed a chain tackle with corner and cover combined to lock the raider''s legs.', '2026-04-11 14:42:18+00'),
@@ -105,8 +105,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Raider should have attempted a hand touch on the corner at 0:10 seconds when he stepped forward unguarded.', '2026-04-11 14:42:18+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Tackle was possible at 0:12 seconds using a back hold by the cover defender.', '2026-04-11 14:42:18+00');
 
-  -- User 8: Ganesh Iyer (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ganesh Iyer', 'coach', '2026-04-12 15:49:31+00') RETURNING id INTO sub_id;
+  -- User 8: Arul Selvam (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Arul Selvam', 'coach', '2026-04-12 15:49:31+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders gave too much space in the lobby; the raider used the lobby line to score and escape.', '2026-04-12 15:49:31+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have used a wrist catch and pulled the raider into the half court for an easy point.', '2026-04-12 15:49:31+00'),
@@ -119,8 +119,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, he should have gone for a multi-point raid by combining bonus at 0:06 and touch at 0:11.', '2026-04-12 15:49:31+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have used a wrist catch at 0:09 seconds and pulled raider into the half court.', '2026-04-12 15:49:31+00');
 
-  -- User 9: Prabhu Deva (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Prabhu Deva', 'player', '2026-04-13 16:56:44+00') RETURNING id INTO sub_id;
+  -- User 9: Bharathi Raja (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Bharathi Raja', 'player', '2026-04-13 16:56:44+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defenders did not coordinate well; the corner defender broke the chain too early which allowed the raider to slip through the gap.', '2026-04-13 16:56:44+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The remaining two defenders on the other side should have attempted a stunning dash to push the raider out of the lobby.', '2026-04-13 16:56:44+00'),
@@ -133,8 +133,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, touch attempt was right at 0:12 seconds when the defenders broke chain formation briefly.', '2026-04-13 16:56:44+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have attempted thigh hold at 0:08 seconds when raider was off balance.', '2026-04-13 16:56:44+00');
 
-  -- User 10: Hari Prasad (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Hari Prasad', 'player', '2026-04-14 17:03:57+00') RETURNING id INTO sub_id;
+  -- User 10: Chandran Krishnamurthy (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Chandran Krishnamurthy', 'player', '2026-04-14 17:03:57+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defender who got touched did not call for ankle hold support from his teammates.', '2026-04-14 17:03:57+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'A proper ankle hold by the corner combined with cover backup would have made it a super tackle.', '2026-04-14 17:03:57+00'),
@@ -147,8 +147,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was possible at 0:08 seconds but he hesitated; quick decision making was missing.', '2026-04-14 17:03:57+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Tackle was possible at 0:13 seconds with a chain tackle when raider extended for the touch.', '2026-04-14 17:03:57+00');
 
-  -- User 11: Senthil Murugan (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Senthil Murugan', 'player', '2026-04-15 18:10:10+00') RETURNING id INTO sub_id;
+  -- User 11: Elango Subbiah (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Elango Subbiah', 'player', '2026-04-15 18:10:10+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Cover defender attempted a back hold without support, raider twisted out using a dubki movement.', '2026-04-15 18:10:10+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They should have communicated to set a trap on the weak side instead of staying in default positions.', '2026-04-15 18:10:10+00'),
@@ -161,8 +161,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'No, since the score was balanced, raider should have only collected bonus at 0:06 seconds.', '2026-04-15 18:10:10+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'No, defense did right by waiting; tackle should be attempted only when raider commits to a touch.', '2026-04-15 18:10:10+00');
 
-  -- User 12: Rajesh M (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Rajesh M', 'player', '2026-04-16 19:17:23+00') RETURNING id INTO sub_id;
+  -- User 12: Ganesan Nataraj (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ganesan Nataraj', 'player', '2026-04-16 19:17:23+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'There was no proper communication between the corner and cover; they both attempted the same dash leaving a gap behind.', '2026-04-16 19:17:23+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The in defenders should have rushed forward immediately when the raider extended his leg for a toe touch.', '2026-04-16 19:17:23+00'),
@@ -175,8 +175,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Raider should have attempted touch at 0:10 seconds with a back kick on the right in defender.', '2026-04-16 19:17:23+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Best tackle window was at 0:08 seconds with an ankle hold by the right corner.', '2026-04-16 19:17:23+00');
 
-  -- User 13: Dinesh Kumar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Dinesh Kumar', 'player', '2026-04-17 08:24:36+00') RETURNING id INTO sub_id;
+  -- User 13: Hariharan Iyer (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Hariharan Iyer', 'player', '2026-04-17 08:24:36+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defense was loose at the baulk line, they should have advanced together as a unit.', '2026-04-17 08:24:36+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Better foot positioning by the in defenders would have prevented the lobby escape.', '2026-04-17 08:24:36+00'),
@@ -189,8 +189,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was possible at 0:08 seconds using a side kick on the cover defender who was leaning forward.', '2026-04-17 08:24:36+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A chain tackle at 0:09 seconds was the right window; cover should have supported the corner.', '2026-04-17 08:24:36+00');
 
-  -- User 14: Vikram Singh (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Vikram Singh', 'player', '2026-04-18 09:31:49+00') RETURNING id INTO sub_id;
+  -- User 14: Iniyan Rajendran (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Iniyan Rajendran', 'player', '2026-04-18 09:31:49+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defense was caught off guard, the cover did not anticipate the raider''s hand touch and reacted too late.', '2026-04-18 09:31:49+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'A coordinated dash from both ends would have trapped the raider inside the half line.', '2026-04-18 09:31:49+00'),
@@ -203,8 +203,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Bonus alone at 0:05 seconds was sufficient given the team strength on the mat.', '2026-04-18 09:31:49+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have attempted block at 0:10 seconds to push raider out of the lobby line.', '2026-04-18 09:31:49+00');
 
-  -- User 15: Ashok Reddy (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ashok Reddy', 'coach', '2026-04-19 10:38:02+00') RETURNING id INTO sub_id;
+  -- User 15: Jeevanandham R (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Jeevanandham R', 'coach', '2026-04-19 10:38:02+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The corner failed to use a thigh hold and the raider easily broke free using a side step.', '2026-04-19 10:38:02+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The corner could have attempted a blocking dash to push the raider out of bounds.', '2026-04-19 10:38:02+00'),
@@ -217,8 +217,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Bonus first at 0:05 seconds, then a quick toe touch on the left corner at 0:11 seconds would have been ideal.', '2026-04-19 10:38:02+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have waited till raider committed to bonus and then attempted dash at 0:11 seconds.', '2026-04-19 10:38:02+00');
 
-  -- User 16: Bharath Chandran (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Bharath Chandran', 'player', '2026-04-20 11:45:15+00') RETURNING id INTO sub_id;
+  -- User 16: Kannan Thirumalai (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Kannan Thirumalai', 'player', '2026-04-20 11:45:15+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The left in defender did not back up his corner partner during the chain tackle attempt.', '2026-04-20 11:45:15+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have used the lobby rule to their advantage by pushing the raider into the side line area.', '2026-04-20 11:45:15+00'),
@@ -231,8 +231,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, between 0:09 and 0:11 seconds the cover defender was off balance; perfect touch window.', '2026-04-20 11:45:15+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A coordinated dash at 0:11 seconds when raider was crossing back would have been ideal.', '2026-04-20 11:45:15+00');
 
-  -- User 17: Prakash Raja (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Prakash Raja', 'player', '2026-04-21 12:52:28+00') RETURNING id INTO sub_id;
+  -- User 17: Lakshmanan P (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Lakshmanan P', 'player', '2026-04-21 12:52:28+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders were not watching the raider''s foot movement; they reacted only after the touch was made.', '2026-04-21 12:52:28+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'All four defenders should have closed in together since it was a do or die raid.', '2026-04-21 12:52:28+00'),
@@ -245,8 +245,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, raider should have attempted touch around 0:09 seconds when the right cover was isolated and out of position.', '2026-04-21 12:52:28+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, ankle hold at 0:10 seconds when raider extended his foot would have made it a super tackle.', '2026-04-21 12:52:28+00');
 
-  -- User 18: Murugan S (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Murugan S', 'player', '2026-04-22 13:59:41+00') RETURNING id INTO sub_id;
+  -- User 18: Mahalingam V (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Mahalingam V', 'player', '2026-04-22 13:59:41+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders stood flat-footed and did not attempt ankle hold when the raider was within reach.', '2026-04-22 13:59:41+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have attempted a thigh hold combined with a back hold to stop the raider''s return.', '2026-04-22 13:59:41+00'),
@@ -259,8 +259,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was risky; raider should have stayed back and tried only at 0:14 seconds during the return.', '2026-04-22 13:59:41+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Ankle hold by left corner at 0:09 seconds was the prime moment; he hesitated and lost the chance.', '2026-04-22 13:59:41+00');
 
-  -- User 19: Vijay Anand (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Vijay Anand', 'player', '2026-04-23 14:06:54+00') RETURNING id INTO sub_id;
+  -- User 19: Nallathambi K (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Nallathambi K', 'player', '2026-04-23 14:06:54+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Right cover defender lost balance during the dash attempt and that gave the raider an easy return.', '2026-04-23 14:06:54+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Cover should have anticipated the dubki and dropped low to catch the raider''s waist.', '2026-04-23 14:06:54+00'),
@@ -273,8 +273,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch attempt was right at 0:09 seconds using a toe touch on the left cover defender.', '2026-04-23 14:06:54+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'The right cover should have attempted back hold at 0:12 seconds; that was the perfect moment.', '2026-04-23 14:06:54+00');
 
-  -- User 20: Saravanan K (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Saravanan K', 'player', '2026-04-24 15:13:07+00') RETURNING id INTO sub_id;
+  -- User 20: Oviyan Sundaram (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Oviyan Sundaram', 'player', '2026-04-24 15:13:07+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defense was not in proper formation. The right corner was standing too deep allowing the raider easy lobby access.', '2026-04-24 15:13:07+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The cover should have come up to support the corner with an ankle hold the moment the raider touched.', '2026-04-24 15:13:07+00'),
@@ -287,8 +287,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'He should have first secured bonus at 0:07 seconds and then attempted touch at 0:13 seconds.', '2026-04-24 15:13:07+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have set a trap and dashed at 0:13 seconds when raider was tired and returning.', '2026-04-24 15:13:07+00');
 
-  -- User 21: Manoj Pandey (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Manoj Pandey', 'player', '2026-04-05 16:20:20+00') RETURNING id INTO sub_id;
+  -- User 21: Pandiyan Velmurugan (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Pandiyan Velmurugan', 'player', '2026-04-05 16:20:20+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The all-out pressure was on but the defense panicked and attempted single tackles instead of chain formation.', '2026-04-05 16:20:20+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have set a block formation near the baulk line to cut off the raider''s escape route.', '2026-04-05 16:20:20+00'),
@@ -301,8 +301,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'He should have waited for defenders to advance and then attempted a turning kick at 0:13 seconds.', '2026-04-05 16:20:20+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A super tackle attempt was needed at 0:11 seconds since defense had only 4 players on mat.', '2026-04-05 16:20:20+00');
 
-  -- User 22: Rohit Sharma (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Rohit Sharma', 'coach', '2026-04-06 17:27:33+00') RETURNING id INTO sub_id;
+  -- User 22: Ramaswamy Krishnan (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ramaswamy Krishnan', 'coach', '2026-04-06 17:27:33+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Cover defender released his hold prematurely, the raider used that gap to make a touch and return safely.', '2026-04-06 17:27:33+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have formed a chain tackle with corner and cover combined to lock the raider''s legs.', '2026-04-06 17:27:33+00'),
@@ -315,8 +315,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Raider should have attempted a hand touch on the corner at 0:10 seconds when he stepped forward unguarded.', '2026-04-06 17:27:33+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Tackle was possible at 0:12 seconds using a back hold by the cover defender.', '2026-04-06 17:27:33+00');
 
-  -- User 23: Ajay Devgan (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ajay Devgan', 'player', '2026-04-07 18:34:46+00') RETURNING id INTO sub_id;
+  -- User 23: Sathish Mohan (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Sathish Mohan', 'player', '2026-04-07 18:34:46+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders gave too much space in the lobby; the raider used the lobby line to score and escape.', '2026-04-07 18:34:46+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have used a wrist catch and pulled the raider into the half court for an easy point.', '2026-04-07 18:34:46+00'),
@@ -329,8 +329,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, he should have gone for a multi-point raid by combining bonus at 0:06 and touch at 0:11.', '2026-04-07 18:34:46+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have used a wrist catch at 0:09 seconds and pulled raider into the half court.', '2026-04-07 18:34:46+00');
 
-  -- User 24: Sandeep Yadav (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Sandeep Yadav', 'player', '2026-04-08 19:41:59+00') RETURNING id INTO sub_id;
+  -- User 24: Thiruvengadam N (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Thiruvengadam N', 'player', '2026-04-08 19:41:59+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defenders did not coordinate well; the corner defender broke the chain too early which allowed the raider to slip through the gap.', '2026-04-08 19:41:59+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The remaining two defenders on the other side should have attempted a stunning dash to push the raider out of the lobby.', '2026-04-08 19:41:59+00'),
@@ -343,8 +343,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, touch attempt was right at 0:12 seconds when the defenders broke chain formation briefly.', '2026-04-08 19:41:59+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have attempted thigh hold at 0:08 seconds when raider was off balance.', '2026-04-08 19:41:59+00');
 
-  -- User 25: Pawan Kumar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Pawan Kumar', 'player', '2026-04-09 08:48:12+00') RETURNING id INTO sub_id;
+  -- User 25: Udhayakumar A (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Udhayakumar A', 'player', '2026-04-09 08:48:12+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defender who got touched did not call for ankle hold support from his teammates.', '2026-04-09 08:48:12+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'A proper ankle hold by the corner combined with cover backup would have made it a super tackle.', '2026-04-09 08:48:12+00'),
@@ -357,8 +357,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was possible at 0:08 seconds but he hesitated; quick decision making was missing.', '2026-04-09 08:48:12+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Tackle was possible at 0:13 seconds with a chain tackle when raider extended for the touch.', '2026-04-09 08:48:12+00');
 
-  -- User 26: Deepak Hooda (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Deepak Hooda', 'player', '2026-04-10 09:55:25+00') RETURNING id INTO sub_id;
+  -- User 26: Vetrivel S (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Vetrivel S', 'player', '2026-04-10 09:55:25+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Cover defender attempted a back hold without support, raider twisted out using a dubki movement.', '2026-04-10 09:55:25+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They should have communicated to set a trap on the weak side instead of staying in default positions.', '2026-04-10 09:55:25+00'),
@@ -371,8 +371,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'No, since the score was balanced, raider should have only collected bonus at 0:06 seconds.', '2026-04-10 09:55:25+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'No, defense did right by waiting; tackle should be attempted only when raider commits to a touch.', '2026-04-10 09:55:25+00');
 
-  -- User 27: Rishank Devadiga (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Rishank Devadiga', 'player', '2026-04-11 10:02:38+00') RETURNING id INTO sub_id;
+  -- User 27: Yuvaraj Manikandan (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Yuvaraj Manikandan', 'player', '2026-04-11 10:02:38+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'There was no proper communication between the corner and cover; they both attempted the same dash leaving a gap behind.', '2026-04-11 10:02:38+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The in defenders should have rushed forward immediately when the raider extended his leg for a toe touch.', '2026-04-11 10:02:38+00'),
@@ -385,8 +385,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Raider should have attempted touch at 0:10 seconds with a back kick on the right in defender.', '2026-04-11 10:02:38+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Best tackle window was at 0:08 seconds with an ankle hold by the right corner.', '2026-04-11 10:02:38+00');
 
-  -- User 28: Ajay Thakur (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ajay Thakur', 'player', '2026-04-12 11:09:51+00') RETURNING id INTO sub_id;
+  -- User 28: Anbazhagan R (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Anbazhagan R', 'player', '2026-04-12 11:09:51+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defense was loose at the baulk line, they should have advanced together as a unit.', '2026-04-12 11:09:51+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Better foot positioning by the in defenders would have prevented the lobby escape.', '2026-04-12 11:09:51+00'),
@@ -399,8 +399,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was possible at 0:08 seconds using a side kick on the cover defender who was leaning forward.', '2026-04-12 11:09:51+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A chain tackle at 0:09 seconds was the right window; cover should have supported the corner.', '2026-04-12 11:09:51+00');
 
-  -- User 29: Pardeep Narwal (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Pardeep Narwal', 'coach', '2026-04-13 12:16:04+00') RETURNING id INTO sub_id;
+  -- User 29: Balamurugan T (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Balamurugan T', 'coach', '2026-04-13 12:16:04+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defense was caught off guard, the cover did not anticipate the raider''s hand touch and reacted too late.', '2026-04-13 12:16:04+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'A coordinated dash from both ends would have trapped the raider inside the half line.', '2026-04-13 12:16:04+00'),
@@ -413,8 +413,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Bonus alone at 0:05 seconds was sufficient given the team strength on the mat.', '2026-04-13 12:16:04+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have attempted block at 0:10 seconds to push raider out of the lobby line.', '2026-04-13 12:16:04+00');
 
-  -- User 30: Naveen Goyat (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Naveen Goyat', 'player', '2026-04-14 13:23:17+00') RETURNING id INTO sub_id;
+  -- User 30: Chinnasamy K (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Chinnasamy K', 'player', '2026-04-14 13:23:17+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The corner failed to use a thigh hold and the raider easily broke free using a side step.', '2026-04-14 13:23:17+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The corner could have attempted a blocking dash to push the raider out of bounds.', '2026-04-14 13:23:17+00'),
@@ -427,8 +427,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Bonus first at 0:05 seconds, then a quick toe touch on the left corner at 0:11 seconds would have been ideal.', '2026-04-14 13:23:17+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have waited till raider committed to bonus and then attempted dash at 0:11 seconds.', '2026-04-14 13:23:17+00');
 
-  -- User 31: Sunil Kumar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Sunil Kumar', 'player', '2026-04-15 14:30:30+00') RETURNING id INTO sub_id;
+  -- User 31: Devaraj Subramani (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Devaraj Subramani', 'player', '2026-04-15 14:30:30+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The left in defender did not back up his corner partner during the chain tackle attempt.', '2026-04-15 14:30:30+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have used the lobby rule to their advantage by pushing the raider into the side line area.', '2026-04-15 14:30:30+00'),
@@ -441,8 +441,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, between 0:09 and 0:11 seconds the cover defender was off balance; perfect touch window.', '2026-04-15 14:30:30+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A coordinated dash at 0:11 seconds when raider was crossing back would have been ideal.', '2026-04-15 14:30:30+00');
 
-  -- User 32: Rahul Chaudhari (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Rahul Chaudhari', 'player', '2026-04-16 15:37:43+00') RETURNING id INTO sub_id;
+  -- User 32: Easwaran V (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Easwaran V', 'player', '2026-04-16 15:37:43+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders were not watching the raider''s foot movement; they reacted only after the touch was made.', '2026-04-16 15:37:43+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'All four defenders should have closed in together since it was a do or die raid.', '2026-04-16 15:37:43+00'),
@@ -455,8 +455,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, raider should have attempted touch around 0:09 seconds when the right cover was isolated and out of position.', '2026-04-16 15:37:43+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, ankle hold at 0:10 seconds when raider extended his foot would have made it a super tackle.', '2026-04-16 15:37:43+00');
 
-  -- User 33: Anup Kumar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Anup Kumar', 'player', '2026-04-17 16:44:56+00') RETURNING id INTO sub_id;
+  -- User 33: Gunasekaran M (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Gunasekaran M', 'player', '2026-04-17 16:44:56+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders stood flat-footed and did not attempt ankle hold when the raider was within reach.', '2026-04-17 16:44:56+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have attempted a thigh hold combined with a back hold to stop the raider''s return.', '2026-04-17 16:44:56+00'),
@@ -469,8 +469,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was risky; raider should have stayed back and tried only at 0:14 seconds during the return.', '2026-04-17 16:44:56+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Ankle hold by left corner at 0:09 seconds was the prime moment; he hesitated and lost the chance.', '2026-04-17 16:44:56+00');
 
-  -- User 34: Rakesh Yadav (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Rakesh Yadav', 'player', '2026-04-18 17:51:09+00') RETURNING id INTO sub_id;
+  -- User 34: Harikrishnan S (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Harikrishnan S', 'player', '2026-04-18 17:51:09+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Right cover defender lost balance during the dash attempt and that gave the raider an easy return.', '2026-04-18 17:51:09+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Cover should have anticipated the dubki and dropped low to catch the raider''s waist.', '2026-04-18 17:51:09+00'),
@@ -483,8 +483,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch attempt was right at 0:09 seconds using a toe touch on the left cover defender.', '2026-04-18 17:51:09+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'The right cover should have attempted back hold at 0:12 seconds; that was the perfect moment.', '2026-04-18 17:51:09+00');
 
-  -- User 35: Mahesh Goud (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Mahesh Goud', 'player', '2026-04-19 18:58:22+00') RETURNING id INTO sub_id;
+  -- User 35: Ilangovan P (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ilangovan P', 'player', '2026-04-19 18:58:22+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defense was not in proper formation. The right corner was standing too deep allowing the raider easy lobby access.', '2026-04-19 18:58:22+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The cover should have come up to support the corner with an ankle hold the moment the raider touched.', '2026-04-19 18:58:22+00'),
@@ -497,8 +497,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'He should have first secured bonus at 0:07 seconds and then attempted touch at 0:13 seconds.', '2026-04-19 18:58:22+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have set a trap and dashed at 0:13 seconds when raider was tired and returning.', '2026-04-19 18:58:22+00');
 
-  -- User 36: Suresh Naik (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Suresh Naik', 'coach', '2026-04-20 19:05:35+00') RETURNING id INTO sub_id;
+  -- User 36: Jayakumar R (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Jayakumar R', 'coach', '2026-04-20 19:05:35+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The all-out pressure was on but the defense panicked and attempted single tackles instead of chain formation.', '2026-04-20 19:05:35+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have set a block formation near the baulk line to cut off the raider''s escape route.', '2026-04-20 19:05:35+00'),
@@ -511,8 +511,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'He should have waited for defenders to advance and then attempted a turning kick at 0:13 seconds.', '2026-04-20 19:05:35+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A super tackle attempt was needed at 0:11 seconds since defense had only 4 players on mat.', '2026-04-20 19:05:35+00');
 
-  -- User 37: Bhaskar Rao (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Bhaskar Rao', 'player', '2026-04-21 08:12:48+00') RETURNING id INTO sub_id;
+  -- User 37: Kathiresan M (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Kathiresan M', 'player', '2026-04-21 08:12:48+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Cover defender released his hold prematurely, the raider used that gap to make a touch and return safely.', '2026-04-21 08:12:48+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have formed a chain tackle with corner and cover combined to lock the raider''s legs.', '2026-04-21 08:12:48+00'),
@@ -525,8 +525,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Raider should have attempted a hand touch on the corner at 0:10 seconds when he stepped forward unguarded.', '2026-04-21 08:12:48+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Tackle was possible at 0:12 seconds using a back hold by the cover defender.', '2026-04-21 08:12:48+00');
 
-  -- User 38: Krishna Reddy (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Krishna Reddy', 'player', '2026-04-22 09:19:01+00') RETURNING id INTO sub_id;
+  -- User 38: Loganathan V (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Loganathan V', 'player', '2026-04-22 09:19:01+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders gave too much space in the lobby; the raider used the lobby line to score and escape.', '2026-04-22 09:19:01+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have used a wrist catch and pulled the raider into the half court for an easy point.', '2026-04-22 09:19:01+00'),
@@ -539,8 +539,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, he should have gone for a multi-point raid by combining bonus at 0:06 and touch at 0:11.', '2026-04-22 09:19:01+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have used a wrist catch at 0:09 seconds and pulled raider into the half court.', '2026-04-22 09:19:01+00');
 
-  -- User 39: Venkatesh M (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Venkatesh M', 'player', '2026-04-23 10:26:14+00') RETURNING id INTO sub_id;
+  -- User 39: Manikandan Pandiyan (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Manikandan Pandiyan', 'player', '2026-04-23 10:26:14+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defenders did not coordinate well; the corner defender broke the chain too early which allowed the raider to slip through the gap.', '2026-04-23 10:26:14+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The remaining two defenders on the other side should have attempted a stunning dash to push the raider out of the lobby.', '2026-04-23 10:26:14+00'),
@@ -553,8 +553,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, touch attempt was right at 0:12 seconds when the defenders broke chain formation briefly.', '2026-04-23 10:26:14+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have attempted thigh hold at 0:08 seconds when raider was off balance.', '2026-04-23 10:26:14+00');
 
-  -- User 40: Lokesh Kumar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Lokesh Kumar', 'player', '2026-04-24 11:33:27+00') RETURNING id INTO sub_id;
+  -- User 40: Nagarajan S (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Nagarajan S', 'player', '2026-04-24 11:33:27+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defender who got touched did not call for ankle hold support from his teammates.', '2026-04-24 11:33:27+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'A proper ankle hold by the corner combined with cover backup would have made it a super tackle.', '2026-04-24 11:33:27+00'),
@@ -567,8 +567,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was possible at 0:08 seconds but he hesitated; quick decision making was missing.', '2026-04-24 11:33:27+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Tackle was possible at 0:13 seconds with a chain tackle when raider extended for the touch.', '2026-04-24 11:33:27+00');
 
-  -- User 41: Nitin Tomar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Nitin Tomar', 'player', '2026-04-05 12:40:40+00') RETURNING id INTO sub_id;
+  -- User 41: Palanisamy K (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Palanisamy K', 'player', '2026-04-05 12:40:40+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Cover defender attempted a back hold without support, raider twisted out using a dubki movement.', '2026-04-05 12:40:40+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They should have communicated to set a trap on the weak side instead of staying in default positions.', '2026-04-05 12:40:40+00'),
@@ -581,8 +581,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'No, since the score was balanced, raider should have only collected bonus at 0:06 seconds.', '2026-04-05 12:40:40+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'No, defense did right by waiting; tackle should be attempted only when raider commits to a touch.', '2026-04-05 12:40:40+00');
 
-  -- User 42: Jaideep Dahiya (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Jaideep Dahiya', 'player', '2026-04-06 13:47:53+00') RETURNING id INTO sub_id;
+  -- User 42: Ravichandran M (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ravichandran M', 'player', '2026-04-06 13:47:53+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'There was no proper communication between the corner and cover; they both attempted the same dash leaving a gap behind.', '2026-04-06 13:47:53+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The in defenders should have rushed forward immediately when the raider extended his leg for a toe touch.', '2026-04-06 13:47:53+00'),
@@ -595,8 +595,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Raider should have attempted touch at 0:10 seconds with a back kick on the right in defender.', '2026-04-06 13:47:53+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Best tackle window was at 0:08 seconds with an ankle hold by the right corner.', '2026-04-06 13:47:53+00');
 
-  -- User 43: Sumit Sangwan (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Sumit Sangwan', 'coach', '2026-04-07 14:54:06+00') RETURNING id INTO sub_id;
+  -- User 43: Sundaramoorthy V (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Sundaramoorthy V', 'coach', '2026-04-07 14:54:06+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defense was loose at the baulk line, they should have advanced together as a unit.', '2026-04-07 14:54:06+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Better foot positioning by the in defenders would have prevented the lobby escape.', '2026-04-07 14:54:06+00'),
@@ -609,8 +609,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was possible at 0:08 seconds using a side kick on the cover defender who was leaning forward.', '2026-04-07 14:54:06+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A chain tackle at 0:09 seconds was the right window; cover should have supported the corner.', '2026-04-07 14:54:06+00');
 
-  -- User 44: Mohit Chillar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Mohit Chillar', 'player', '2026-04-08 15:01:19+00') RETURNING id INTO sub_id;
+  -- User 44: Thangaraj P (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Thangaraj P', 'player', '2026-04-08 15:01:19+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defense was caught off guard, the cover did not anticipate the raider''s hand touch and reacted too late.', '2026-04-08 15:01:19+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'A coordinated dash from both ends would have trapped the raider inside the half line.', '2026-04-08 15:01:19+00'),
@@ -623,8 +623,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Bonus alone at 0:05 seconds was sufficient given the team strength on the mat.', '2026-04-08 15:01:19+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have attempted block at 0:10 seconds to push raider out of the lobby line.', '2026-04-08 15:01:19+00');
 
-  -- User 45: Surender Nada (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Surender Nada', 'player', '2026-04-09 16:08:32+00') RETURNING id INTO sub_id;
+  -- User 45: Umapathy S (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Umapathy S', 'player', '2026-04-09 16:08:32+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The corner failed to use a thigh hold and the raider easily broke free using a side step.', '2026-04-09 16:08:32+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The corner could have attempted a blocking dash to push the raider out of bounds.', '2026-04-09 16:08:32+00'),
@@ -637,8 +637,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Bonus first at 0:05 seconds, then a quick toe touch on the left corner at 0:11 seconds would have been ideal.', '2026-04-09 16:08:32+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have waited till raider committed to bonus and then attempted dash at 0:11 seconds.', '2026-04-09 16:08:32+00');
 
-  -- User 46: Rohit Rana (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Rohit Rana', 'player', '2026-04-10 17:15:45+00') RETURNING id INTO sub_id;
+  -- User 46: Velmurugan R (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Velmurugan R', 'player', '2026-04-10 17:15:45+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The left in defender did not back up his corner partner during the chain tackle attempt.', '2026-04-10 17:15:45+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have used the lobby rule to their advantage by pushing the raider into the side line area.', '2026-04-10 17:15:45+00'),
@@ -651,8 +651,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, between 0:09 and 0:11 seconds the cover defender was off balance; perfect touch window.', '2026-04-10 17:15:45+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A coordinated dash at 0:11 seconds when raider was crossing back would have been ideal.', '2026-04-10 17:15:45+00');
 
-  -- User 47: Jasvir Singh (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Jasvir Singh', 'player', '2026-04-11 18:22:58+00') RETURNING id INTO sub_id;
+  -- User 47: Yogeshwaran M (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Yogeshwaran M', 'player', '2026-04-11 18:22:58+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders were not watching the raider''s foot movement; they reacted only after the touch was made.', '2026-04-11 18:22:58+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'All four defenders should have closed in together since it was a do or die raid.', '2026-04-11 18:22:58+00'),
@@ -665,8 +665,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, raider should have attempted touch around 0:09 seconds when the right cover was isolated and out of position.', '2026-04-11 18:22:58+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, ankle hold at 0:10 seconds when raider extended his foot would have made it a super tackle.', '2026-04-11 18:22:58+00');
 
-  -- User 48: Manjeet Chhillar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Manjeet Chhillar', 'player', '2026-04-12 19:29:11+00') RETURNING id INTO sub_id;
+  -- User 48: Adhithyan Selvakumar (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Adhithyan Selvakumar', 'player', '2026-04-12 19:29:11+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders stood flat-footed and did not attempt ankle hold when the raider was within reach.', '2026-04-12 19:29:11+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have attempted a thigh hold combined with a back hold to stop the raider''s return.', '2026-04-12 19:29:11+00'),
@@ -679,8 +679,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was risky; raider should have stayed back and tried only at 0:14 seconds during the return.', '2026-04-12 19:29:11+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Ankle hold by left corner at 0:09 seconds was the prime moment; he hesitated and lost the chance.', '2026-04-12 19:29:11+00');
 
-  -- User 49: Ravinder Pahal (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ravinder Pahal', 'player', '2026-04-13 08:36:24+00') RETURNING id INTO sub_id;
+  -- User 49: Bhaskar Ramalingam (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Bhaskar Ramalingam', 'player', '2026-04-13 08:36:24+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Right cover defender lost balance during the dash attempt and that gave the raider an easy return.', '2026-04-13 08:36:24+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Cover should have anticipated the dubki and dropped low to catch the raider''s waist.', '2026-04-13 08:36:24+00'),
@@ -693,8 +693,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch attempt was right at 0:09 seconds using a toe touch on the left cover defender.', '2026-04-13 08:36:24+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'The right cover should have attempted back hold at 0:12 seconds; that was the perfect moment.', '2026-04-13 08:36:24+00');
 
-  -- User 50: Surjeet Singh (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Surjeet Singh', 'coach', '2026-04-14 09:43:37+00') RETURNING id INTO sub_id;
+  -- User 50: Chezhiyan A (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Chezhiyan A', 'coach', '2026-04-14 09:43:37+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defense was not in proper formation. The right corner was standing too deep allowing the raider easy lobby access.', '2026-04-14 09:43:37+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The cover should have come up to support the corner with an ankle hold the moment the raider touched.', '2026-04-14 09:43:37+00'),
@@ -707,8 +707,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'He should have first secured bonus at 0:07 seconds and then attempted touch at 0:13 seconds.', '2026-04-14 09:43:37+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have set a trap and dashed at 0:13 seconds when raider was tired and returning.', '2026-04-14 09:43:37+00');
 
-  -- User 51: Ajith Kumar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ajith Kumar', 'player', '2026-04-15 10:50:50+00') RETURNING id INTO sub_id;
+  -- User 51: Dharmaraj M (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Dharmaraj M', 'player', '2026-04-15 10:50:50+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The all-out pressure was on but the defense panicked and attempted single tackles instead of chain formation.', '2026-04-15 10:50:50+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have set a block formation near the baulk line to cut off the raider''s escape route.', '2026-04-15 10:50:50+00'),
@@ -721,8 +721,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'He should have waited for defenders to advance and then attempted a turning kick at 0:13 seconds.', '2026-04-15 10:50:50+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A super tackle attempt was needed at 0:11 seconds since defense had only 4 players on mat.', '2026-04-15 10:50:50+00');
 
-  -- User 52: Balaji R (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Balaji R', 'player', '2026-04-16 11:57:03+00') RETURNING id INTO sub_id;
+  -- User 52: Ezhilarasan P (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ezhilarasan P', 'player', '2026-04-16 11:57:03+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Cover defender released his hold prematurely, the raider used that gap to make a touch and return safely.', '2026-04-16 11:57:03+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have formed a chain tackle with corner and cover combined to lock the raider''s legs.', '2026-04-16 11:57:03+00'),
@@ -735,8 +735,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Raider should have attempted a hand touch on the corner at 0:10 seconds when he stepped forward unguarded.', '2026-04-16 11:57:03+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Tackle was possible at 0:12 seconds using a back hold by the cover defender.', '2026-04-16 11:57:03+00');
 
-  -- User 53: Chandru S (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Chandru S', 'player', '2026-04-17 12:04:16+00') RETURNING id INTO sub_id;
+  -- User 53: Govindharaj K (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Govindharaj K', 'player', '2026-04-17 12:04:16+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders gave too much space in the lobby; the raider used the lobby line to score and escape.', '2026-04-17 12:04:16+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have used a wrist catch and pulled the raider into the half court for an easy point.', '2026-04-17 12:04:16+00'),
@@ -749,8 +749,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, he should have gone for a multi-point raid by combining bonus at 0:06 and touch at 0:11.', '2026-04-17 12:04:16+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have used a wrist catch at 0:09 seconds and pulled raider into the half court.', '2026-04-17 12:04:16+00');
 
-  -- User 54: Dhanush V (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Dhanush V', 'player', '2026-04-18 13:11:29+00') RETURNING id INTO sub_id;
+  -- User 54: Hemanathan S (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Hemanathan S', 'player', '2026-04-18 13:11:29+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defenders did not coordinate well; the corner defender broke the chain too early which allowed the raider to slip through the gap.', '2026-04-18 13:11:29+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The remaining two defenders on the other side should have attempted a stunning dash to push the raider out of the lobby.', '2026-04-18 13:11:29+00'),
@@ -763,8 +763,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, touch attempt was right at 0:12 seconds when the defenders broke chain formation briefly.', '2026-04-18 13:11:29+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have attempted thigh hold at 0:08 seconds when raider was off balance.', '2026-04-18 13:11:29+00');
 
-  -- User 55: Elango K (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Elango K', 'player', '2026-04-19 14:18:42+00') RETURNING id INTO sub_id;
+  -- User 55: Inbaraj V (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Inbaraj V', 'player', '2026-04-19 14:18:42+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defender who got touched did not call for ankle hold support from his teammates.', '2026-04-19 14:18:42+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'A proper ankle hold by the corner combined with cover backup would have made it a super tackle.', '2026-04-19 14:18:42+00'),
@@ -777,8 +777,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was possible at 0:08 seconds but he hesitated; quick decision making was missing.', '2026-04-19 14:18:42+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Tackle was possible at 0:13 seconds with a chain tackle when raider extended for the touch.', '2026-04-19 14:18:42+00');
 
-  -- User 56: Farook Ahmed (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Farook Ahmed', 'player', '2026-04-20 15:25:55+00') RETURNING id INTO sub_id;
+  -- User 56: Jagadeesan M (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Jagadeesan M', 'player', '2026-04-20 15:25:55+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Cover defender attempted a back hold without support, raider twisted out using a dubki movement.', '2026-04-20 15:25:55+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They should have communicated to set a trap on the weak side instead of staying in default positions.', '2026-04-20 15:25:55+00'),
@@ -791,8 +791,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'No, since the score was balanced, raider should have only collected bonus at 0:06 seconds.', '2026-04-20 15:25:55+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'No, defense did right by waiting; tackle should be attempted only when raider commits to a touch.', '2026-04-20 15:25:55+00');
 
-  -- User 57: Gokul Krishnan (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Gokul Krishnan', 'coach', '2026-04-21 16:32:08+00') RETURNING id INTO sub_id;
+  -- User 57: Kamaraj P (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Kamaraj P', 'coach', '2026-04-21 16:32:08+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'There was no proper communication between the corner and cover; they both attempted the same dash leaving a gap behind.', '2026-04-21 16:32:08+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The in defenders should have rushed forward immediately when the raider extended his leg for a toe touch.', '2026-04-21 16:32:08+00'),
@@ -805,8 +805,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Raider should have attempted touch at 0:10 seconds with a back kick on the right in defender.', '2026-04-21 16:32:08+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Best tackle window was at 0:08 seconds with an ankle hold by the right corner.', '2026-04-21 16:32:08+00');
 
-  -- User 58: Harish Rao (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Harish Rao', 'player', '2026-04-22 17:39:21+00') RETURNING id INTO sub_id;
+  -- User 58: Logeshwaran R (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Logeshwaran R', 'player', '2026-04-22 17:39:21+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defense was loose at the baulk line, they should have advanced together as a unit.', '2026-04-22 17:39:21+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Better foot positioning by the in defenders would have prevented the lobby escape.', '2026-04-22 17:39:21+00'),
@@ -819,8 +819,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was possible at 0:08 seconds using a side kick on the cover defender who was leaning forward.', '2026-04-22 17:39:21+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A chain tackle at 0:09 seconds was the right window; cover should have supported the corner.', '2026-04-22 17:39:21+00');
 
-  -- User 59: Imran Khan (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Imran Khan', 'player', '2026-04-23 18:46:34+00') RETURNING id INTO sub_id;
+  -- User 59: Madhanraj S (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Madhanraj S', 'player', '2026-04-23 18:46:34+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defense was caught off guard, the cover did not anticipate the raider''s hand touch and reacted too late.', '2026-04-23 18:46:34+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'A coordinated dash from both ends would have trapped the raider inside the half line.', '2026-04-23 18:46:34+00'),
@@ -833,8 +833,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Bonus alone at 0:05 seconds was sufficient given the team strength on the mat.', '2026-04-23 18:46:34+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have attempted block at 0:10 seconds to push raider out of the lobby line.', '2026-04-23 18:46:34+00');
 
-  -- User 60: Jagadeesh M (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Jagadeesh M', 'player', '2026-04-24 19:53:47+00') RETURNING id INTO sub_id;
+  -- User 60: Naveen Kumar V (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Naveen Kumar V', 'player', '2026-04-24 19:53:47+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The corner failed to use a thigh hold and the raider easily broke free using a side step.', '2026-04-24 19:53:47+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The corner could have attempted a blocking dash to push the raider out of bounds.', '2026-04-24 19:53:47+00'),
@@ -847,8 +847,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Bonus first at 0:05 seconds, then a quick toe touch on the left corner at 0:11 seconds would have been ideal.', '2026-04-24 19:53:47+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have waited till raider committed to bonus and then attempted dash at 0:11 seconds.', '2026-04-24 19:53:47+00');
 
-  -- User 61: Kalyan Reddy (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Kalyan Reddy', 'player', '2026-04-05 08:00:00+00') RETURNING id INTO sub_id;
+  -- User 61: Pradeep Anbu (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Pradeep Anbu', 'player', '2026-04-05 08:00:00+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The left in defender did not back up his corner partner during the chain tackle attempt.', '2026-04-05 08:00:00+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have used the lobby rule to their advantage by pushing the raider into the side line area.', '2026-04-05 08:00:00+00'),
@@ -861,8 +861,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, between 0:09 and 0:11 seconds the cover defender was off balance; perfect touch window.', '2026-04-05 08:00:00+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A coordinated dash at 0:11 seconds when raider was crossing back would have been ideal.', '2026-04-05 08:00:00+00');
 
-  -- User 62: Lakshman P (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Lakshman P', 'player', '2026-04-06 09:07:13+00') RETURNING id INTO sub_id;
+  -- User 62: Rajkumar M (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Rajkumar M', 'player', '2026-04-06 09:07:13+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders were not watching the raider''s foot movement; they reacted only after the touch was made.', '2026-04-06 09:07:13+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'All four defenders should have closed in together since it was a do or die raid.', '2026-04-06 09:07:13+00'),
@@ -875,8 +875,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, raider should have attempted touch around 0:09 seconds when the right cover was isolated and out of position.', '2026-04-06 09:07:13+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, ankle hold at 0:10 seconds when raider extended his foot would have made it a super tackle.', '2026-04-06 09:07:13+00');
 
-  -- User 63: Mahendra V (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Mahendra V', 'player', '2026-04-07 10:14:26+00') RETURNING id INTO sub_id;
+  -- User 63: Suriyaprakash R (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Suriyaprakash R', 'player', '2026-04-07 10:14:26+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders stood flat-footed and did not attempt ankle hold when the raider was within reach.', '2026-04-07 10:14:26+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have attempted a thigh hold combined with a back hold to stop the raider''s return.', '2026-04-07 10:14:26+00'),
@@ -889,8 +889,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was risky; raider should have stayed back and tried only at 0:14 seconds during the return.', '2026-04-07 10:14:26+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Ankle hold by left corner at 0:09 seconds was the prime moment; he hesitated and lost the chance.', '2026-04-07 10:14:26+00');
 
-  -- User 64: Nandakumar S (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Nandakumar S', 'coach', '2026-04-08 11:21:39+00') RETURNING id INTO sub_id;
+  -- User 64: Tamilarasan K (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Tamilarasan K', 'coach', '2026-04-08 11:21:39+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Right cover defender lost balance during the dash attempt and that gave the raider an easy return.', '2026-04-08 11:21:39+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Cover should have anticipated the dubki and dropped low to catch the raider''s waist.', '2026-04-08 11:21:39+00'),
@@ -903,8 +903,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch attempt was right at 0:09 seconds using a toe touch on the left cover defender.', '2026-04-08 11:21:39+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'The right cover should have attempted back hold at 0:12 seconds; that was the perfect moment.', '2026-04-08 11:21:39+00');
 
-  -- User 65: Omkar Patil (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Omkar Patil', 'player', '2026-04-09 12:28:52+00') RETURNING id INTO sub_id;
+  -- User 65: Vasanthkumar S (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Vasanthkumar S', 'player', '2026-04-09 12:28:52+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defense was not in proper formation. The right corner was standing too deep allowing the raider easy lobby access.', '2026-04-09 12:28:52+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The cover should have come up to support the corner with an ankle hold the moment the raider touched.', '2026-04-09 12:28:52+00'),
@@ -917,8 +917,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'He should have first secured bonus at 0:07 seconds and then attempted touch at 0:13 seconds.', '2026-04-09 12:28:52+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have set a trap and dashed at 0:13 seconds when raider was tired and returning.', '2026-04-09 12:28:52+00');
 
-  -- User 66: Prashant Gowda (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Prashant Gowda', 'player', '2026-04-10 13:35:05+00') RETURNING id INTO sub_id;
+  -- User 66: Aravind Krishnan (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Aravind Krishnan', 'player', '2026-04-10 13:35:05+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The all-out pressure was on but the defense panicked and attempted single tackles instead of chain formation.', '2026-04-10 13:35:05+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have set a block formation near the baulk line to cut off the raider''s escape route.', '2026-04-10 13:35:05+00'),
@@ -931,8 +931,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'He should have waited for defenders to advance and then attempted a turning kick at 0:13 seconds.', '2026-04-10 13:35:05+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A super tackle attempt was needed at 0:11 seconds since defense had only 4 players on mat.', '2026-04-10 13:35:05+00');
 
-  -- User 67: Quresh Ali (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Quresh Ali', 'player', '2026-04-11 14:42:18+00') RETURNING id INTO sub_id;
+  -- User 67: Boopathi Raja (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Boopathi Raja', 'player', '2026-04-11 14:42:18+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Cover defender released his hold prematurely, the raider used that gap to make a touch and return safely.', '2026-04-11 14:42:18+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have formed a chain tackle with corner and cover combined to lock the raider''s legs.', '2026-04-11 14:42:18+00'),
@@ -945,8 +945,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Raider should have attempted a hand touch on the corner at 0:10 seconds when he stepped forward unguarded.', '2026-04-11 14:42:18+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Tackle was possible at 0:12 seconds using a back hold by the cover defender.', '2026-04-11 14:42:18+00');
 
-  -- User 68: Ramana Murthy (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ramana Murthy', 'player', '2026-04-12 15:49:31+00') RETURNING id INTO sub_id;
+  -- User 68: Chandrasekar M (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Chandrasekar M', 'player', '2026-04-12 15:49:31+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders gave too much space in the lobby; the raider used the lobby line to score and escape.', '2026-04-12 15:49:31+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have used a wrist catch and pulled the raider into the half court for an easy point.', '2026-04-12 15:49:31+00'),
@@ -959,8 +959,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, he should have gone for a multi-point raid by combining bonus at 0:06 and touch at 0:11.', '2026-04-12 15:49:31+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have used a wrist catch at 0:09 seconds and pulled raider into the half court.', '2026-04-12 15:49:31+00');
 
-  -- User 69: Shankar Lingam (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Shankar Lingam', 'player', '2026-04-13 16:56:44+00') RETURNING id INTO sub_id;
+  -- User 69: Deepan Chakravarthy (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Deepan Chakravarthy', 'player', '2026-04-13 16:56:44+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defenders did not coordinate well; the corner defender broke the chain too early which allowed the raider to slip through the gap.', '2026-04-13 16:56:44+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The remaining two defenders on the other side should have attempted a stunning dash to push the raider out of the lobby.', '2026-04-13 16:56:44+00'),
@@ -973,8 +973,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, touch attempt was right at 0:12 seconds when the defenders broke chain formation briefly.', '2026-04-13 16:56:44+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have attempted thigh hold at 0:08 seconds when raider was off balance.', '2026-04-13 16:56:44+00');
 
-  -- User 70: Tirupathi Rao (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Tirupathi Rao', 'player', '2026-04-14 17:03:57+00') RETURNING id INTO sub_id;
+  -- User 70: Ezhil Mathi (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ezhil Mathi', 'player', '2026-04-14 17:03:57+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defender who got touched did not call for ankle hold support from his teammates.', '2026-04-14 17:03:57+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'A proper ankle hold by the corner combined with cover backup would have made it a super tackle.', '2026-04-14 17:03:57+00'),
@@ -987,8 +987,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was possible at 0:08 seconds but he hesitated; quick decision making was missing.', '2026-04-14 17:03:57+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Tackle was possible at 0:13 seconds with a chain tackle when raider extended for the touch.', '2026-04-14 17:03:57+00');
 
-  -- User 71: Udayan Bhat (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Udayan Bhat', 'coach', '2026-04-15 18:10:10+00') RETURNING id INTO sub_id;
+  -- User 71: Gokulnath R (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Gokulnath R', 'coach', '2026-04-15 18:10:10+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Cover defender attempted a back hold without support, raider twisted out using a dubki movement.', '2026-04-15 18:10:10+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They should have communicated to set a trap on the weak side instead of staying in default positions.', '2026-04-15 18:10:10+00'),
@@ -1001,8 +1001,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'No, since the score was balanced, raider should have only collected bonus at 0:06 seconds.', '2026-04-15 18:10:10+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'No, defense did right by waiting; tackle should be attempted only when raider commits to a touch.', '2026-04-15 18:10:10+00');
 
-  -- User 72: Vasanth Kumar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Vasanth Kumar', 'player', '2026-04-16 19:17:23+00') RETURNING id INTO sub_id;
+  -- User 72: Hariprasad S (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Hariprasad S', 'player', '2026-04-16 19:17:23+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'There was no proper communication between the corner and cover; they both attempted the same dash leaving a gap behind.', '2026-04-16 19:17:23+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The in defenders should have rushed forward immediately when the raider extended his leg for a toe touch.', '2026-04-16 19:17:23+00'),
@@ -1015,8 +1015,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Raider should have attempted touch at 0:10 seconds with a back kick on the right in defender.', '2026-04-16 19:17:23+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Best tackle window was at 0:08 seconds with an ankle hold by the right corner.', '2026-04-16 19:17:23+00');
 
-  -- User 73: Wasim Akram (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Wasim Akram', 'player', '2026-04-17 08:24:36+00') RETURNING id INTO sub_id;
+  -- User 73: Ilamaran P (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Ilamaran P', 'player', '2026-04-17 08:24:36+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defense was loose at the baulk line, they should have advanced together as a unit.', '2026-04-17 08:24:36+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Better foot positioning by the in defenders would have prevented the lobby escape.', '2026-04-17 08:24:36+00'),
@@ -1029,8 +1029,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was possible at 0:08 seconds using a side kick on the cover defender who was leaning forward.', '2026-04-17 08:24:36+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A chain tackle at 0:09 seconds was the right window; cover should have supported the corner.', '2026-04-17 08:24:36+00');
 
-  -- User 74: Yashwanth K (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Yashwanth K', 'player', '2026-04-18 09:31:49+00') RETURNING id INTO sub_id;
+  -- User 74: Jaganathan K (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Jaganathan K', 'player', '2026-04-18 09:31:49+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defense was caught off guard, the cover did not anticipate the raider''s hand touch and reacted too late.', '2026-04-18 09:31:49+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'A coordinated dash from both ends would have trapped the raider inside the half line.', '2026-04-18 09:31:49+00'),
@@ -1043,8 +1043,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Bonus alone at 0:05 seconds was sufficient given the team strength on the mat.', '2026-04-18 09:31:49+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have attempted block at 0:10 seconds to push raider out of the lobby line.', '2026-04-18 09:31:49+00');
 
-  -- User 75: Zameer Pasha (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Zameer Pasha', 'player', '2026-04-19 10:38:02+00') RETURNING id INTO sub_id;
+  -- User 75: Karthikeyan M (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Karthikeyan M', 'player', '2026-04-19 10:38:02+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The corner failed to use a thigh hold and the raider easily broke free using a side step.', '2026-04-19 10:38:02+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The corner could have attempted a blocking dash to push the raider out of bounds.', '2026-04-19 10:38:02+00'),
@@ -1057,8 +1057,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Bonus first at 0:05 seconds, then a quick toe touch on the left corner at 0:11 seconds would have been ideal.', '2026-04-19 10:38:02+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Defense should have waited till raider committed to bonus and then attempted dash at 0:11 seconds.', '2026-04-19 10:38:02+00');
 
-  -- User 76: Anand Kumar (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Anand Kumar', 'player', '2026-04-20 11:45:15+00') RETURNING id INTO sub_id;
+  -- User 76: Lingesh Babu (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Lingesh Babu', 'player', '2026-04-20 11:45:15+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The left in defender did not back up his corner partner during the chain tackle attempt.', '2026-04-20 11:45:15+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'They could have used the lobby rule to their advantage by pushing the raider into the side line area.', '2026-04-20 11:45:15+00'),
@@ -1071,8 +1071,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, between 0:09 and 0:11 seconds the cover defender was off balance; perfect touch window.', '2026-04-20 11:45:15+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'A coordinated dash at 0:11 seconds when raider was crossing back would have been ideal.', '2026-04-20 11:45:15+00');
 
-  -- User 77: Bharath Raj (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Bharath Raj', 'player', '2026-04-21 12:52:28+00') RETURNING id INTO sub_id;
+  -- User 77: Muthukumar P (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Muthukumar P', 'player', '2026-04-21 12:52:28+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders were not watching the raider''s foot movement; they reacted only after the touch was made.', '2026-04-21 12:52:28+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'All four defenders should have closed in together since it was a do or die raid.', '2026-04-21 12:52:28+00'),
@@ -1085,8 +1085,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, raider should have attempted touch around 0:09 seconds when the right cover was isolated and out of position.', '2026-04-21 12:52:28+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Yes, ankle hold at 0:10 seconds when raider extended his foot would have made it a super tackle.', '2026-04-21 12:52:28+00');
 
-  -- User 78: Chetan B (coach)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Chetan B', 'coach', '2026-04-22 13:59:41+00') RETURNING id INTO sub_id;
+  -- User 78: Nithyanandam S (coach)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Nithyanandam S', 'coach', '2026-04-22 13:59:41+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Defenders stood flat-footed and did not attempt ankle hold when the raider was within reach.', '2026-04-22 13:59:41+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Defense should have attempted a thigh hold combined with a back hold to stop the raider''s return.', '2026-04-22 13:59:41+00'),
@@ -1099,8 +1099,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch was risky; raider should have stayed back and tried only at 0:14 seconds during the return.', '2026-04-22 13:59:41+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'Ankle hold by left corner at 0:09 seconds was the prime moment; he hesitated and lost the chance.', '2026-04-22 13:59:41+00');
 
-  -- User 79: Dileep Krishna (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Dileep Krishna', 'player', '2026-04-23 14:06:54+00') RETURNING id INTO sub_id;
+  -- User 79: Pugazhendi R (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Pugazhendi R', 'player', '2026-04-23 14:06:54+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'Right cover defender lost balance during the dash attempt and that gave the raider an easy return.', '2026-04-23 14:06:54+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'Cover should have anticipated the dubki and dropped low to catch the raider''s waist.', '2026-04-23 14:06:54+00'),
@@ -1113,8 +1113,8 @@
     (sub_id, 5, 0, 'Should the raider have tried for touch point and when (eg. at 5 seconds or 0:05 seconds)?', 'Touch attempt was right at 0:09 seconds using a toe touch on the left cover defender.', '2026-04-23 14:06:54+00'),
     (sub_id, 5, 1, 'Should the defense have tried for tackle and when (eg. at 5 seconds or 0:05 seconds)?', 'The right cover should have attempted back hold at 0:12 seconds; that was the perfect moment.', '2026-04-23 14:06:54+00');
 
-  -- User 80: Eswar Reddy (player)
-  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Eswar Reddy', 'player', '2026-04-24 15:13:07+00') RETURNING id INTO sub_id;
+  -- User 80: Rameshkumar V (player)
+  INSERT INTO submissions (name, designation, submitted_at) VALUES ('Rameshkumar V', 'player', '2026-04-24 15:13:07+00') RETURNING id INTO sub_id;
   INSERT INTO responses (submission_id, video_id, question_index, question_text, answer_text, created_at) VALUES
     (sub_id, 1, 0, 'What mistake did the defense do?', 'The defense was not in proper formation. The right corner was standing too deep allowing the raider easy lobby access.', '2026-04-24 15:13:07+00'),
     (sub_id, 1, 1, 'What else the defense could have done?', 'The cover should have come up to support the corner with an ankle hold the moment the raider touched.', '2026-04-24 15:13:07+00'),
