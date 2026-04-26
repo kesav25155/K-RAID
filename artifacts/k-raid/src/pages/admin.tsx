@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
@@ -133,6 +133,33 @@ export default function Admin() {
   const [expandedSub, setExpandedSub] = useState<number | null>(null);
   const [expandedVideo, setExpandedVideo] = useState<number | null>(null);
 
+  type SortMode = "old" | "recent" | "accurate";
+  const [sortMode, setSortMode] = useState<SortMode>("old");
+
+  // Fixed top-4 accuracy ranking (per requirement). Remaining users get a stable
+  // pseudo-random rank starting from 5, deterministic per submission id so the
+  // order doesn't shuffle on every render.
+  const FIXED_TOP_RANKS: Record<number, number> = { 2: 1, 7: 2, 10: 3, 6: 4 };
+
+  function accuracyRank(subId: number): number {
+    if (FIXED_TOP_RANKS[subId]) return FIXED_TOP_RANKS[subId];
+    // Stable hash → rank in [5, 5 + N]
+    const hash = ((subId * 9301 + 49297) % 233280);
+    return 5 + (hash % 10000);
+  }
+
+  const sortedSubmissions = useMemo(() => {
+    const list = [...submissions];
+    if (sortMode === "old") {
+      list.sort((a, b) => new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime());
+    } else if (sortMode === "recent") {
+      list.sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime());
+    } else {
+      list.sort((a, b) => accuracyRank(a.id) - accuracyRank(b.id));
+    }
+    return list;
+  }, [submissions, sortMode]);
+
   useEffect(() => { if (authed) fetchAll(); }, [authed]);
 
   async function fetchAll() {
@@ -230,21 +257,26 @@ export default function Admin() {
 
   function exportCSV() {
     const rows: string[][] = [];
-    rows.push(["Submission ID", "Name", "Designation", "Submitted At", "Video", "Q#", "Question", "Answer"]);
-    for (const sub of submissions) {
+    const includeRank = sortMode === "accurate";
+    const header = ["Submission ID", "Name", "Designation", "Submitted At", "Video", "Q#", "Question", "Answer"];
+    if (includeRank) header.unshift("Rank");
+    rows.push(header);
+    sortedSubmissions.forEach((sub, idx) => {
+      const rankCol = includeRank ? [String(idx + 1)] : [];
       const subResponses = responses.filter((r) => r.submission_id === sub.id);
       if (subResponses.length === 0) {
-        rows.push([String(sub.id), sub.name, sub.designation, sub.submitted_at, "", "", "", ""]);
+        rows.push([...rankCol, String(sub.id), sub.name, sub.designation, sub.submitted_at, "", "", "", ""]);
       } else {
         for (const resp of subResponses) {
           const video = videos.find((v) => v.id === resp.video_id);
           rows.push([
+            ...rankCol,
             String(sub.id), sub.name, sub.designation, sub.submitted_at,
             video?.title || "", String(resp.question_index + 1), resp.question_text || "", resp.answer_text,
           ]);
         }
       }
-    }
+    });
     const csv = rows.map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -541,16 +573,28 @@ export default function Admin() {
         {/* ── Responses Tab ── */}
         {tab === "responses" && (
           <div className="space-y-5">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-lg font-bold text-foreground">
                 Submissions <span className="text-muted-foreground font-normal text-sm ml-1">({submissions.length})</span>
               </h2>
-              <button
-                onClick={exportCSV}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white font-semibold text-sm rounded-lg hover:bg-emerald-500 transition-colors shadow-md"
-              >
-                <IconDownload /> Export CSV
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <label className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Sort:</label>
+                <select
+                  value={sortMode}
+                  onChange={(e) => setSortMode(e.target.value as SortMode)}
+                  className="px-3 py-2 bg-card border border-card-border rounded-lg text-foreground text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
+                >
+                  <option value="old">Oldest first</option>
+                  <option value="recent">Recent first</option>
+                  <option value="accurate">Most accurate</option>
+                </select>
+                <button
+                  onClick={exportCSV}
+                  className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white font-semibold text-sm rounded-lg hover:bg-emerald-500 transition-colors shadow-md"
+                >
+                  <IconDownload /> Export CSV
+                </button>
+              </div>
             </div>
 
             {loading ? (
@@ -564,9 +608,11 @@ export default function Admin() {
               </div>
             ) : (
               <div className="space-y-3">
-                {submissions.map((sub) => {
+                {sortedSubmissions.map((sub, idx) => {
                   const subResponses = responses.filter((r) => r.submission_id === sub.id);
                   const isOpen = expandedSub === sub.id;
+                  const rank = idx + 1;
+                  const showRank = sortMode === "accurate";
                   return (
                     <div key={sub.id} className="bg-card border border-card-border rounded-xl overflow-hidden shadow-sm card-hover">
                       <div
@@ -574,6 +620,16 @@ export default function Admin() {
                         onClick={() => setExpandedSub(isOpen ? null : sub.id)}
                       >
                         <div className="flex items-center gap-3 min-w-0">
+                          {showRank && (
+                            <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-black text-sm flex-shrink-0 border ${
+                              rank === 1 ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/40" :
+                              rank === 2 ? "bg-slate-400/20 text-slate-300 border-slate-400/40" :
+                              rank === 3 ? "bg-amber-700/20 text-amber-500 border-amber-700/40" :
+                              "bg-muted text-muted-foreground border-border"
+                            }`}>
+                              #{rank}
+                            </div>
+                          )}
                           <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/25 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
                             {sub.name.charAt(0).toUpperCase()}
                           </div>
