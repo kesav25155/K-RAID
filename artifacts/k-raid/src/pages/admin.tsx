@@ -1,6 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type QuestionItem = { question_text: string; order: number };
 type Video = { id: number; title: string; order: number; questions: QuestionItem[]; url?: string };
@@ -578,16 +585,52 @@ export default function Admin() {
                 Submissions <span className="text-muted-foreground font-normal text-sm ml-1">({submissions.length})</span>
               </h2>
               <div className="flex items-center gap-2 flex-wrap">
-                <label className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Sort:</label>
-                <select
-                  value={sortMode}
-                  onChange={(e) => setSortMode(e.target.value as SortMode)}
-                  className="px-3 py-2 bg-card border border-card-border rounded-lg text-foreground text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
-                >
-                  <option value="old">Oldest first</option>
-                  <option value="recent">Recent first</option>
-                  <option value="accurate">Most accurate</option>
-                </select>
+                <div className="flex items-center gap-2 px-2 py-1.5 bg-card border border-card-border rounded-lg shadow-sm">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold uppercase tracking-wider pl-1.5">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M7 12h10M10 18h4"/></svg>
+                    Sort
+                  </span>
+                  <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
+                    <SelectTrigger
+                      className="h-8 min-w-[160px] bg-background border-border/60 hover:border-primary/50 hover:bg-primary/5 text-foreground text-sm font-semibold rounded-md transition-colors focus:ring-2 focus:ring-primary/40 focus:ring-offset-0 [&>svg]:opacity-70 [&>svg]:text-primary"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent
+                      className="bg-card border-card-border shadow-2xl rounded-lg overflow-hidden min-w-[200px]"
+                      position="popper"
+                      sideOffset={6}
+                    >
+                      <SelectItem
+                        value="old"
+                        className="text-sm font-medium cursor-pointer focus:bg-primary/15 focus:text-primary data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary py-2.5"
+                      >
+                        <span className="flex items-center gap-2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h13M3 12h13M3 18h9"/><path d="m17 8 4 4-4 4"/></svg>
+                          Oldest first
+                        </span>
+                      </SelectItem>
+                      <SelectItem
+                        value="recent"
+                        className="text-sm font-medium cursor-pointer focus:bg-primary/15 focus:text-primary data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary py-2.5"
+                      >
+                        <span className="flex items-center gap-2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h13M3 12h13M3 18h9"/><path d="m21 16-4 4-4-4"/></svg>
+                          Recent first
+                        </span>
+                      </SelectItem>
+                      <SelectItem
+                        value="accurate"
+                        className="text-sm font-medium cursor-pointer focus:bg-primary/15 focus:text-primary data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary py-2.5"
+                      >
+                        <span className="flex items-center gap-2">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                          Most accurate
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <button
                   onClick={exportCSV}
                   className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white font-semibold text-sm rounded-lg hover:bg-emerald-500 transition-colors shadow-md"
