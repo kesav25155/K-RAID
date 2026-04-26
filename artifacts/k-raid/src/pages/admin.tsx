@@ -151,9 +151,9 @@ export default function Admin() {
   const sortedSubmissions = useMemo(() => {
     const list = [...submissions];
     if (sortMode === "old") {
-      list.sort((a, b) => new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime());
+      list.sort((a, b) => a.id - b.id);
     } else if (sortMode === "recent") {
-      list.sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime());
+      list.sort((a, b) => b.id - a.id);
     } else {
       list.sort((a, b) => accuracyRank(a.id) - accuracyRank(b.id));
     }
